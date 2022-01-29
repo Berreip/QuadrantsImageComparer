@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="QicRecVisualizer.Views.RecValidation.RecValidationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:recValidation="clr-namespace:QicRecVisualizer.Views.RecValidation"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance recValidation:RecValidationViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBox
+                Margin="5, 2"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                VerticalAlignment="Center"
+                Height="50"
+                HorizontalAlignment="Stretch"
+                Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="{Binding SelectedFilePath}"
+                materialDesign:HintAssist.Hint="selected file path"/>
+            
+            <Button Grid.Column="1" 
+                    Margin="2"
+                    Height="50" Width="50"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Command="{Binding SelectFileCommand}">
+                <materialDesign:PackIcon Kind="DotsHorizontal" />
+            </Button>
+        </Grid>
+        
+    </Grid>
+</UserControl>
