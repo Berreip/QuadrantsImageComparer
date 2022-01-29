@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:main="clr-namespace:QicRecVisualizer.Main"
-        xmlns:navigation="clr-namespace:QicRecVisualizer.Navigation"
+        xmlns:navigation="clr-namespace:QicRecVisualizer.Services.Navigation"
         mc:Ignorable="d"
         Title="QicRecVisualizer"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"

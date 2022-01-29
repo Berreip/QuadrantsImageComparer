@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Windows;
 using SimpleInjector;
+
 // ReSharper disable UnusedMember.Global
 
-namespace QicRecVisualizer.Injection
+namespace QicRecVisualizer.Services.Injection
 {
     internal interface IInjectionContainer : IDisposable
     {

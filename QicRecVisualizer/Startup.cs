@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using QicRecVisualizer.Injection;
 using QicRecVisualizer.Main;
+using QicRecVisualizer.Services.Injection;
 
 namespace QicRecVisualizer
 {

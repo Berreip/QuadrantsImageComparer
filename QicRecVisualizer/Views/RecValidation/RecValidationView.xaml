@@ -5,38 +5,278 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:recValidation="clr-namespace:QicRecVisualizer.Views.RecValidation"
+             xmlns:adapters="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters"
+             xmlns:dependencyProps="clr-namespace:QicRecVisualizer.WpfCore.DependencyProps"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="RecValidationUserControlName"
+             d:DesignHeight="650" d:DesignWidth="1000"
              d:DataContext="{d:DesignInstance recValidation:RecValidationViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
     <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition Width="Auto" MinWidth="200" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Panel -->
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            
-            <TextBox
-                Margin="5, 2"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                VerticalAlignment="Center"
-                Height="50"
-                HorizontalAlignment="Stretch"
-                Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged}"
-                ToolTip="{Binding SelectedFilePath}"
-                materialDesign:HintAssist.Hint="selected file path"/>
-            
-            <Button Grid.Column="1" 
-                    Margin="2"
-                    Height="50" Width="50"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Command="{Binding SelectFileCommand}">
-                <materialDesign:PackIcon Kind="DotsHorizontal" />
-            </Button>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Image source choice -->
+            <materialDesign:Card Margin="5" Padding="10" BorderThickness="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        Margin="5, 2"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        VerticalAlignment="Center"
+                        Height="50"
+                        HorizontalAlignment="Stretch"
+                        Text="{Binding SelectedFilePath, UpdateSourceTrigger=PropertyChanged, Delay=100}"
+                        ToolTip="{Binding SelectedFilePath}"
+                        materialDesign:HintAssist.Hint="selected file path to add to cache" />
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button ToolTip="Select a file from browser"
+                                Margin="2"
+                                Height="50" Width="50"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Command="{Binding SelectFileCommand}">
+                            <materialDesign:PackIcon Kind="DotsHorizontal" Height="35" Width="35" />
+                        </Button>
+
+                        <Button ToolTip="Add the selected file to the cache"
+                                Margin="2"
+                                Height="50" Width="50"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                IsEnabled="{Binding IsSelectedFileValid}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Command="{Binding AddSelectedFileCommand}">
+                            <materialDesign:PackIcon Kind="Plus" Height="35" Width="35" />
+                        </Button>
+
+                        <Button ToolTip="Add the print screen clipboard into available image"
+                                Margin="2"
+                                Height="50" Width="50"
+                                Padding="0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                Command="{Binding AddClipBoardToFileCommand}">
+                            <materialDesign:PackIcon Kind="CameraPlus" Height="35" Width="35" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </materialDesign:Card>
+
+            <!-- Image display -->
+            <materialDesign:Card Grid.Row="1" Margin="5" Padding="10">
+                <Canvas x:Name="CanvasSelectedImage">
+                    <!--selected image display-->
+                    <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
+                           dependencyProps:ActualSizeBinder.Observe="True"
+                           dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.ImageActualWidth, Mode=OneWayToSource}"
+                           dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.ImageActualHeight, Mode=OneWayToSource}"
+                           MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
+                           MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
+
+                    <Rectangle Canvas.Top="{Binding ImageDisplayer.RectangleTopPosition}"
+                               Canvas.Left="{Binding ImageDisplayer.RectangleLeftPosition}"
+                               Width="{Binding ImageDisplayer.RectangleWidth}"
+                               Height="{Binding ImageDisplayer.RectangleHeight}"
+                               StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
+                </Canvas>
+            </materialDesign:Card>
         </Grid>
-        
+
+        <!-- SEPARATOR -->
+        <GridSplitter Grid.Column="1"
+                      Margin="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      Background="Transparent"
+                      ShowsPreview="True"
+                      Width="4" />
+
+        <!-- Right panel -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Image added list -->
+            <materialDesign:Card Margin="5" Padding="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <!-- header -->
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Margin="10"
+                                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                                   Text="Images in cache"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center" />
+                        <Button
+                            Grid.Column="1" ToolTip="open cache folder"
+                            Margin="20, 2, 2, 2" Height="45" Width="45"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Style="{StaticResource MaterialDesignFlatButton}"
+                            Foreground="{StaticResource MaterialDesignBody}"
+                            Command="{Binding DataContext.ImagesListHolder.OpenCacheFolderCommand, ElementName=RecValidationUserControlName}">
+                            <materialDesign:PackIcon Kind="FolderOpenOutline" Height="35" Width="35" />
+                        </Button>
+                    </Grid>
+
+                    <!-- List of images -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+                        <ItemsControl
+
+                            ItemsSource="{Binding ImagesListHolder.ImagesAvailableInCache}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type adapters:ImageInCacheAdapter}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" MinWidth="100" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton
+                                                GroupName="Group1"
+                                                Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                                Margin="4"
+                                                IsChecked="{Binding IsSelectedAsFirstImage}"
+                                                Content="1" />
+                                            <RadioButton
+                                                GroupName="Group2"
+                                                Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                                Margin="4"
+                                                IsChecked="{Binding IsSelectedAsSecondImage}"
+                                                Content="2" />
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1" Margin="2"
+                                                ToolTip="{Binding ImageFullName}"
+                                                Content="{Binding ImageName}"
+                                                Command="{Binding DataContext.ImageDisplayer.DisplayImageCommand, ElementName=RecValidationUserControlName}"
+                                                CommandParameter="{Binding .}"
+                                                Style="{StaticResource MaterialDesignFlatButton}">
+                                        </Button>
+
+
+                                        <Button
+                                            Grid.Column="2" ToolTip="delete the image from cache"
+                                            Margin="2" Height="35" Width="35" Padding="0"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Style="{StaticResource MaterialDesignFlatButton}"
+                                            Command="{Binding DataContext.ImagesListHolder.DeleteImageInCacheCommand, ElementName=RecValidationUserControlName}"
+                                            CommandParameter="{Binding .}">
+                                            <materialDesign:PackIcon Kind="Delete" Height="25" Width="25" />
+                                        </Button>
+                                    </Grid>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </materialDesign:Card>
+            
+            <!-- image infos -->
+            <materialDesign:Card Grid.Row="1" Margin="5"
+                                 Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                 Padding="10"
+                                 IsEnabled="{Binding ImageDisplayer.HasCurrentImage}"
+                                 ToolTip="Current image information">
+                <StackPanel>
+                    <UniformGrid HorizontalAlignment="Stretch" Rows="1">
+
+                        <TextBlock Text="{Binding ImageDisplayer.ImageWidthFormated}"
+                                   Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <TextBlock Text="{Binding ImageDisplayer.ImageHeightFormated}"
+                                   Style="{StaticResource MaterialDesignBody1TextBlock}"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                    </UniformGrid>
+                </StackPanel>
+            </materialDesign:Card>
+
+            <!-- Control image -->
+            <materialDesign:Card Grid.Row="2" Margin="5" Padding="10" 
+                                 Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel>
+                    <TextBlock Text="AOI settings"
+                               Style="{StaticResource MaterialDesignBody1TextBlock}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Slider Margin="5, 10" Height="120"
+                                Orientation="Vertical"
+                                Minimum="0"
+                                Maximum="100"
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                Value="{Binding ImageDisplayer.BottomSliderValue}" />
+                        <Slider Margin="5, 10" Height="120"
+                                Grid.Column="1"
+                                Orientation="Vertical"
+                                Minimum="0"
+                                Maximum="100"
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                Value="{Binding ImageDisplayer.TopSliderValue}"
+                                IsDirectionReversed="True" />
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <Slider
+                                Margin="5,10"
+                                Minimum="0"
+                                Maximum="100"
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                Value="{Binding ImageDisplayer.RightSliderValue}" />
+                            <Slider
+                                Margin="5,10"
+                                Minimum="0"
+                                Maximum="100"
+                                Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                Value="{Binding ImageDisplayer.LeftSliderValue}"
+                                IsDirectionReversed="True" />
+
+                        </StackPanel>
+                    </Grid>
+
+                </StackPanel>
+            </materialDesign:Card>
+        </Grid>
+
     </Grid>
 </UserControl>

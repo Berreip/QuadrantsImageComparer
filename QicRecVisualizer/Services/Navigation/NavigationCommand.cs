@@ -2,7 +2,7 @@
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Commands;
 
-namespace QicRecVisualizer.Navigation
+namespace QicRecVisualizer.Services.Navigation
 {
     public interface INavigationCommand
     {

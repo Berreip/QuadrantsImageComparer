@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using QuadrantsImageComparerLib.Core;
 using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 
@@ -39,5 +41,12 @@ namespace QicRecVisualizer.WpfCore.Browsers
                 return false;
             }
         }
+        
+        public static void OpenFolderInExplorer(this DirectoryInfo dir)
+        {
+            if (dir == null || !dir.ExistsExplicit()) return;
+            using (var _ = Process.Start(new ProcessStartInfo("explorer.exe", dir.FullName))){}
+        }
+
     }
 }

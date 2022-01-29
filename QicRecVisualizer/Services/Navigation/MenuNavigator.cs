@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using QicRecVisualizer.Injection;
+using QicRecVisualizer.Services.Injection;
 using QicRecVisualizer.Views.Configuration;
 using QicRecVisualizer.Views.RecValidation;
 using QicRecVisualizer.WpfCore;
 
-namespace QicRecVisualizer.Navigation
+namespace QicRecVisualizer.Services.Navigation
 {
     internal interface IMenuNavigator
     {

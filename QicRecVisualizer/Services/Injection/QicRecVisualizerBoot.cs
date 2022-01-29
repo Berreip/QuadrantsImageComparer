@@ -1,11 +1,15 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using QicRecVisualizer.Main;
-using QicRecVisualizer.Navigation;
+using QicRecVisualizer.Services.Configuration;
+using QicRecVisualizer.Services.ImagesCache;
+using QicRecVisualizer.Services.Navigation;
 using QicRecVisualizer.Views.Configuration;
 using QicRecVisualizer.Views.RecValidation;
+using QicRecVisualizer.Views.RecValidation.RelatedVm;
 using SimpleInjector;
 
-namespace QicRecVisualizer.Injection
+namespace QicRecVisualizer.Services.Injection
 {
     internal sealed class QicRecVisualizerBoot
     {
@@ -19,7 +23,6 @@ namespace QicRecVisualizer.Injection
         public TMainWindow Run<TMainWindow>() where TMainWindow : class
         {
             Register();
-            
             Initialize();
             return _internalContainer.Resolve<TMainWindow>();
         }
@@ -38,10 +41,19 @@ namespace QicRecVisualizer.Injection
             _internalContainer.RegisterType<ConfigurationView>(Lifestyle.Singleton);
             _internalContainer.Register<IExportFilesViewModel, ConfigurationViewModel>(Lifestyle.Singleton);
             
+            // services:
+            _internalContainer.Register<IImageCacheService, ImageCacheService>(Lifestyle.Singleton);
+            
+            // VM related services
+            _internalContainer.Register<IImagesListHolder, ImagesListHolder>(Lifestyle.Singleton);
+            _internalContainer.Register<IQicRecConfigProvider, QicRecConfigProvider>(Lifestyle.Singleton);
+            _internalContainer.Register<IImageDisplayer, ImageDisplayer>(Lifestyle.Singleton);
+            
         }
         
         private void Initialize()
         {
+            _internalContainer.Resolve<IImageCacheService>().LoadAllImagesInCache();
             _internalContainer.Resolve<IMenuNavigator>().NavigateToFirstView();
 
         }

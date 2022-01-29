@@ -1,4 +1,4 @@
-﻿using QicRecVisualizer.Navigation;
+﻿using QicRecVisualizer.Services.Navigation;
 
 namespace QicRecVisualizer.Views.Configuration
 {

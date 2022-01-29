@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QicRecVisualizer", "QicRecVisualizer\QicRecVisualizer.csproj", "{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestWpf", "UnitTestWpf\UnitTestWpf.csproj", "{E7498079-4FB0-436D-B64D-7465CFDEDB93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7498079-4FB0-436D-B64D-7465CFDEDB93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7498079-4FB0-436D-B64D-7465CFDEDB93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7498079-4FB0-436D-B64D-7465CFDEDB93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7498079-4FB0-436D-B64D-7465CFDEDB93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
