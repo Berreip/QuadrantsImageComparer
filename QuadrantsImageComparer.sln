@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuadrantsImageComparerLib", "QuadrantsImageComparerLib\QuadrantsImageComparerLib.csproj", "{871C7CC1-9E8B-48D6-9C5D-A6E704E0A9D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{27F1CAEF-CABE-4B4C-8299-6468180A8CE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QicRecVisualizer", "QicRecVisualizer\QicRecVisualizer.csproj", "{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{871C7CC1-9E8B-48D6-9C5D-A6E704E0A9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{871C7CC1-9E8B-48D6-9C5D-A6E704E0A9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{871C7CC1-9E8B-48D6-9C5D-A6E704E0A9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{871C7CC1-9E8B-48D6-9C5D-A6E704E0A9D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27F1CAEF-CABE-4B4C-8299-6468180A8CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27F1CAEF-CABE-4B4C-8299-6468180A8CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27F1CAEF-CABE-4B4C-8299-6468180A8CE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27F1CAEF-CABE-4B4C-8299-6468180A8CE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BCAA2B7-0C56-4406-AA68-D8FA9111383D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
