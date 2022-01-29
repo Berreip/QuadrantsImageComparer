@@ -22,6 +22,7 @@ namespace QicRecVisualizer.Views.RecValidation
         public IDelegateCommandLight SelectFileCommand { get; }
         public IDelegateCommandLight AddSelectedFileCommand { get; }
         public IDelegateCommandLight AddClipBoardToFileCommand { get; }
+        public IDelegateCommandLight ProcesSelectedImageCommand { get; }
 
         private FileInfo _validFile;
 
@@ -32,6 +33,15 @@ namespace QicRecVisualizer.Views.RecValidation
             SelectFileCommand = new DelegateCommandLight(ExecuteSelectFileCommand);
             AddSelectedFileCommand = new DelegateCommandLight(ExecuteAddSelectedFileCommand);
             AddClipBoardToFileCommand = new DelegateCommandLight(ExecuteAddClipBoardToFileCommand);
+            ProcesSelectedImageCommand = new DelegateCommandLight(ExecuteProcesSelectedImageCommand);
+        }
+
+        private void ExecuteProcesSelectedImageCommand()
+        {
+            AsyncWrapper.Wrap(() =>
+            {
+                
+            });
         }
 
         public string SelectedFilePath

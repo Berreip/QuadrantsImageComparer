@@ -124,6 +124,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <!-- header -->
                     <Grid Margin="5">
@@ -205,6 +206,14 @@
 
                         </ItemsControl>
                     </ScrollViewer>
+                    
+                    <!-- process button -->
+                    <Button Grid.Row="2"
+                            ToolTip="Process the 2 selected image"
+                            Command="{Binding ProcesSelectedImageCommand}"
+                            Content="Start processing"
+                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                        
                 </Grid>
             </materialDesign:Card>
             
