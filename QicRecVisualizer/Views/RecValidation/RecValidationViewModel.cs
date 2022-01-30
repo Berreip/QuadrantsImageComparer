@@ -56,14 +56,9 @@ namespace QicRecVisualizer.Views.RecValidation
                     var result = QuadrantComparer.ComputeDelta(
                         image1,
                         image2,
-                        new QuadrantConfig
+                        new QuadrantConfig(QicRecConstants.DEFAULT_QUADRANT_ROWS, QicRecConstants.DEFAULT_QUADRANT_COLUMNS)
                         {
-                            AoiBottomPercentage = (int) Math.Round(ImageDisplayer.BottomSliderValue),
-                            AoiLeftPercentage = (int) Math.Round(ImageDisplayer.LeftSliderValue),
-                            AoiTopPercentage = (int) Math.Round(ImageDisplayer.TopSliderValue),
-                            AoiRightPercentage = (int) Math.Round(ImageDisplayer.RightSliderValue),
-                            NumberOfQuadrantRows = QicRecConstants.DEFAULT_QUADRANT_ROWS,
-                            NumberOfQuadrantColumns = QicRecConstants.DEFAULT_QUADRANT_COLUMNS,
+                            Aoi = ImageDisplayer.AoiAdapter.GetAoi()
                         });
                 }
             });

@@ -91,6 +91,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Views\Configuration\ConfigurationView.xaml.cs" />
     <Compile Include="Views\Configuration\ConfigurationViewModel.cs" />
+    <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
     <Compile Include="Views\RecValidation\RecValidationView.xaml.cs" />
     <Compile Include="Views\RecValidation\RecValidationViewModel.cs" />

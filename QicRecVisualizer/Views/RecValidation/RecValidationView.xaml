@@ -83,19 +83,19 @@
 
             <!-- Image display -->
             <materialDesign:Card Grid.Row="1" Margin="5" Padding="10">
-                <Canvas x:Name="CanvasSelectedImage">
+                <Canvas x:Name="CanvasSelectedImage" Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <!--selected image display-->
                     <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
                            dependencyProps:ActualSizeBinder.Observe="True"
-                           dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.ImageActualWidth, Mode=OneWayToSource}"
-                           dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.ImageActualHeight, Mode=OneWayToSource}"
+                           dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.AoiAdapter.ImageActualWidth, Mode=OneWayToSource}"
+                           dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.AoiAdapter.ImageActualHeight, Mode=OneWayToSource}"
                            MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
                            MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
 
-                    <Rectangle Canvas.Top="{Binding ImageDisplayer.RectangleTopPosition}"
-                               Canvas.Left="{Binding ImageDisplayer.RectangleLeftPosition}"
-                               Width="{Binding ImageDisplayer.RectangleWidth}"
-                               Height="{Binding ImageDisplayer.RectangleHeight}"
+                    <Rectangle Canvas.Top="{Binding ImageDisplayer.AoiAdapter.RectangleTopPosition}"
+                               Canvas.Left="{Binding ImageDisplayer.AoiAdapter.RectangleLeftPosition}"
+                               Width="{Binding ImageDisplayer.AoiAdapter.RectangleWidth}"
+                               Height="{Binding ImageDisplayer.AoiAdapter.RectangleHeight}"
                                StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
                 </Canvas>
             </materialDesign:Card>
@@ -212,7 +212,7 @@
                             ToolTip="Process the 2 selected image"
                             Command="{Binding ProcesSelectedImageCommand}"
                             Content="Start processing"
-                            Style="{StaticResource MaterialDesignFlatButton}"/>
+                            Style="{StaticResource MaterialDesignOutlinedButton}"/>
                         
                 </Grid>
             </materialDesign:Card>
@@ -243,9 +243,11 @@
                                  ToolTip="Area of interest definition in percentage"
                                  Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel>
-                    <TextBlock Text="AOI settings"
-                               Style="{StaticResource MaterialDesignBody1TextBlock}"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <TextBox
+                        ToolTip="Aoi given by Right|Top|Left|Bottom"
+                        IsReadOnly="True"
+                        Margin="5,10"
+                        Text="{Binding ImageDisplayer.AoiAdapter.AoiResume, Mode=OneWay}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -257,14 +259,14 @@
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.BottomSliderValue}" />
+                                Value="{Binding ImageDisplayer.AoiAdapter.BottomSliderValue}" />
                         <Slider Margin="5, 10" Height="120"
                                 Grid.Column="1"
                                 Orientation="Vertical"
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.TopSliderValue}"
+                                Value="{Binding ImageDisplayer.AoiAdapter.TopSliderValue}"
                                 IsDirectionReversed="True" />
                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
                             <Slider
@@ -272,15 +274,14 @@
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.RightSliderValue}" />
+                                Value="{Binding ImageDisplayer.AoiAdapter.RightSliderValue}" />
                             <Slider
                                 Margin="5,10"
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.LeftSliderValue}"
+                                Value="{Binding ImageDisplayer.AoiAdapter.LeftSliderValue}"
                                 IsDirectionReversed="True" />
-
                         </StackPanel>
                     </Grid>
 

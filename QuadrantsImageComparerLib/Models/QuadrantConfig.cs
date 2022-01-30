@@ -6,11 +6,14 @@
 
     public sealed class QuadrantConfig : IQuadrantConfig
     {
-        public int AoiBottomPercentage { get; set; }
-        public int AoiLeftPercentage { get; set; }
-        public int AoiTopPercentage { get; set; }
-        public int AoiRightPercentage { get; set; }
-        public int NumberOfQuadrantRows { get; set; }
-        public int NumberOfQuadrantColumns { get; set; }
+        public QuadrantConfig(int numberOfQuadrantRows, int numberOfQuadrantColumns)
+        {
+            NumberOfQuadrantRows = numberOfQuadrantRows;
+            NumberOfQuadrantColumns = numberOfQuadrantColumns;
+        }
+
+        public int NumberOfQuadrantRows { get; }
+        public int NumberOfQuadrantColumns { get; }
+        public ImageAoi Aoi { get; set; }
     }
 }

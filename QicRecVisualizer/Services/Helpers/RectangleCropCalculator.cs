@@ -18,11 +18,11 @@ namespace QicRecVisualizer.Services.Helpers
         public static (int LeftPosition, int RectangleWidth) GetNewRectangleWidthAndLeftPosition(double percentageRight, double percentageLeft, int imageCurrentWidth)
         {
             percentageRight = MathExt.Clamp(percentageRight, 0, 100);
-            percentageLeft = MathExt.Clamp(percentageLeft, 0, 100 - percentageRight); // cap top percentage with bottom
+            percentageLeft = MathExt.Clamp(percentageLeft, 0, 100 - percentageRight); // cap top percentage with right
             
-            var topPosition = (int)Math.Round((imageCurrentWidth * percentageLeft)/100);
-            var rectangleHeight =  imageCurrentWidth - topPosition - (int)Math.Round((imageCurrentWidth * percentageRight)/100);
-            return (topPosition, rectangleHeight);
+            var leftPosition = (int)Math.Round((imageCurrentWidth * percentageLeft)/100);
+            var rectangleWidth =  imageCurrentWidth - leftPosition - (int)Math.Round((imageCurrentWidth * percentageRight)/100);
+            return (leftPosition, rectangleWidth);
         }
     }
 }
