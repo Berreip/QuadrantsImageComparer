@@ -240,6 +240,7 @@
 
             <!-- Control image -->
             <materialDesign:Card Grid.Row="2" Margin="5" Padding="10" 
+                                 ToolTip="Area of interest definition in percentage"
                                  Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel>
                     <TextBlock Text="AOI settings"
