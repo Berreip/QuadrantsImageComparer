@@ -83,21 +83,113 @@
 
             <!-- Image display -->
             <materialDesign:Card Grid.Row="1" Margin="5" Padding="10">
-                <Canvas x:Name="CanvasSelectedImage" Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <!--selected image display-->
-                    <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
-                           dependencyProps:ActualSizeBinder.Observe="True"
-                           dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.AoiAdapter.ImageActualWidth, Mode=OneWayToSource}"
-                           dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.AoiAdapter.ImageActualHeight, Mode=OneWayToSource}"
-                           MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
-                           MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                    <Rectangle Canvas.Top="{Binding ImageDisplayer.AoiAdapter.RectangleTopPosition}"
-                               Canvas.Left="{Binding ImageDisplayer.AoiAdapter.RectangleLeftPosition}"
-                               Width="{Binding ImageDisplayer.AoiAdapter.RectangleWidth}"
-                               Height="{Binding ImageDisplayer.AoiAdapter.RectangleHeight}"
-                               StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
-                </Canvas>
+                    <StackPanel Orientation="Horizontal">
+                        <!-- show image -->
+                        <Button ToolTip="Main selected image AOI visualizer"
+                                Margin="2"
+                                Command="{Binding ResultsDisplay.ShowMainPanelImageCommand}"
+                                Content="Image AOI visualizer"
+                                Width="200"
+                                Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                        <ItemsControl ItemsSource="{Binding ResultsDisplay.ResultsTabs}">
+
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type adapters:ResultPanelAdapter}">
+                                    <Button ToolTip="Show result" Margin="2"
+                                            Command="{Binding DataContext.ResultsDisplay.ShowResultPanelCommand, ElementName=RecValidationUserControlName}"
+                                            CommandParameter="{Binding .}"
+                                            Content="{Binding DisplayHeader}"
+                                            Width="120"
+                                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!--selected image display-->
+                    <Border Grid.Row="1" Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource InverseBoolToVisConverter}}" Margin="2">
+                        <Canvas x:Name="CanvasSelectedImage" Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
+                                   dependencyProps:ActualSizeBinder.Observe="True"
+                                   dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.AoiAdapter.ImageActualWidth, Mode=OneWayToSource}"
+                                   dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.AoiAdapter.ImageActualHeight, Mode=OneWayToSource}"
+                                   MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
+                                   MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
+
+                            <Rectangle Canvas.Top="{Binding ImageDisplayer.AoiAdapter.RectangleTopPosition}"
+                                       Canvas.Left="{Binding ImageDisplayer.AoiAdapter.RectangleLeftPosition}"
+                                       Width="{Binding ImageDisplayer.AoiAdapter.RectangleWidth}"
+                                       Height="{Binding ImageDisplayer.AoiAdapter.RectangleHeight}"
+                                       StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
+                        </Canvas>
+                    </Border>
+
+                    <!-- OR selected result  -->
+                    <Grid Grid.Row="1" Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- // first line image details: -->
+                        <materialDesign:Card Margin="5" Padding="10" 
+                                             Background="{StaticResource MaterialDesignPaper}"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth4">
+                            <UniformGrid Columns="4" MaxHeight="300">
+                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.Image1}" Margin="1" />
+                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.ImageQuadrant1}" Margin="1"/>
+                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.Image2}" Margin="1"/>
+                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.ImageQuadrant2}" Margin="1"/>
+                            </UniformGrid>
+                        </materialDesign:Card>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal">
+                            <TextBlock Margin="10" VerticalAlignment="Center">Number of Row</TextBlock>
+                            <ComboBox Margin="10, 2"
+                                      VerticalAlignment="Center"
+                                      ToolTip="Number Of Rows"
+                                      materialDesign:HintAssist.Hint="Number Of Rows"
+                                      MinWidth="72"
+                                      ItemsSource="{Binding ResultsDisplay.AvailableRowsColumnsValues}"
+                                      SelectedValue="{Binding ResultsDisplay.SelectedResultDisplay.SelectedRowValue, Delay=50}">
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                            </ComboBox>
+                            <TextBlock Margin="10" VerticalAlignment="Center">Number of Columns</TextBlock>
+                            <ComboBox Margin="10, 2"
+                                      VerticalAlignment="Center"
+                                      ToolTip="Number Of Columns"
+                                      materialDesign:HintAssist.Hint="Number Of Columns"
+                                      MinWidth="72"
+                                      ItemsSource="{Binding ResultsDisplay.AvailableRowsColumnsValues}"
+                                      SelectedValue="{Binding ResultsDisplay.SelectedResultDisplay.SelectedColumnValue, Delay=50}">
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </materialDesign:Card>
         </Grid>
 
@@ -206,17 +298,17 @@
 
                         </ItemsControl>
                     </ScrollViewer>
-                    
+
                     <!-- process button -->
                     <Button Grid.Row="2"
                             ToolTip="Process the 2 selected image"
                             Command="{Binding ProcesSelectedImageCommand}"
                             Content="Start processing"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"/>
-                        
+                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+
                 </Grid>
             </materialDesign:Card>
-            
+
             <!-- image infos -->
             <materialDesign:Card Grid.Row="1" Margin="5"
                                  Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -239,7 +331,7 @@
             </materialDesign:Card>
 
             <!-- Control image -->
-            <materialDesign:Card Grid.Row="2" Margin="5" Padding="10" 
+            <materialDesign:Card Grid.Row="2" Margin="5" Padding="10"
                                  ToolTip="Area of interest definition in percentage"
                                  Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel>
@@ -247,7 +339,7 @@
                         ToolTip="Aoi given by Right|Top|Left|Bottom"
                         IsReadOnly="True"
                         Margin="5,10"
-                        Text="{Binding ImageDisplayer.AoiAdapter.AoiResume, Mode=OneWay}"/>
+                        Text="{Binding ImageDisplayer.AoiAdapter.AoiResume, Mode=OneWay}" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

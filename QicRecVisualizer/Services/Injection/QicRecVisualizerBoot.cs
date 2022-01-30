@@ -48,6 +48,7 @@ namespace QicRecVisualizer.Services.Injection
             _internalContainer.Register<IImagesListHolder, ImagesListHolder>(Lifestyle.Singleton);
             _internalContainer.Register<IQicRecConfigProvider, QicRecConfigProvider>(Lifestyle.Singleton);
             _internalContainer.Register<IImageDisplayer, ImageDisplayer>(Lifestyle.Singleton);
+            _internalContainer.Register<IResultDisplayer, ResultDisplayer>(Lifestyle.Singleton);
             
         }
         

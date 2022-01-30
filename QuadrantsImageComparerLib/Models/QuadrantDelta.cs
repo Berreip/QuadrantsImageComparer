@@ -21,6 +21,9 @@ namespace QuadrantsImageComparerLib.Models
         /// Warning kind (like ratio that don't fit)
         /// </summary>
         IReadOnlyCollection<WarningKind> Warnings { get; }
+
+        Bitmap QuadrantImg1 { get; }
+        Bitmap QuadrantImg2 { get; }
     }
 
     public sealed class QuadrantDelta : IQuadrantDelta

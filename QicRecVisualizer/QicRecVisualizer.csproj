@@ -93,10 +93,12 @@
     <Compile Include="Views\Configuration\ConfigurationViewModel.cs" />
     <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\ResultPanelAdapter.cs" />
     <Compile Include="Views\RecValidation\RecValidationView.xaml.cs" />
     <Compile Include="Views\RecValidation\RecValidationViewModel.cs" />
     <Compile Include="Views\RecValidation\RelatedVm\ImageDisplayer.cs" />
     <Compile Include="Views\RecValidation\RelatedVm\ImagesListHolder.cs" />
+    <Compile Include="Views\RecValidation\RelatedVm\ResultDisplayer.cs" />
     <Compile Include="WpfCore\AsyncWrapper.cs" />
     <Compile Include="WpfCore\Browsers\BrowserDialogManager.cs" />
     <Compile Include="WpfCore\Commands\CommandHelpers.cs" />

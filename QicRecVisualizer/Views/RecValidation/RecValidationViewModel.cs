@@ -22,6 +22,7 @@ namespace QicRecVisualizer.Views.RecValidation
     {
         public IImagesListHolder ImagesListHolder { get; }
         public IImageDisplayer ImageDisplayer { get; }
+        public IResultDisplayer ResultsDisplay { get; }
         private string _selectedFilePath;
         public IDelegateCommandLight SelectFileCommand { get; }
         public IDelegateCommandLight AddSelectedFileCommand { get; }
@@ -30,10 +31,11 @@ namespace QicRecVisualizer.Views.RecValidation
 
         private FileInfo _validFile;
 
-        public RecValidationViewModel(IImagesListHolder imagesListHolder, IImageDisplayer imageDisplayer)
+        public RecValidationViewModel(IImagesListHolder imagesListHolder, IImageDisplayer imageDisplayer, IResultDisplayer resultsDisplay)
         {
             ImagesListHolder = imagesListHolder;
             ImageDisplayer = imageDisplayer;
+            ResultsDisplay = resultsDisplay;
             SelectFileCommand = new DelegateCommandLight(ExecuteSelectFileCommand);
             AddSelectedFileCommand = new DelegateCommandLight(ExecuteAddSelectedFileCommand);
             AddClipBoardToFileCommand = new DelegateCommandLight(ExecuteAddClipBoardToFileCommand);
@@ -50,16 +52,13 @@ namespace QicRecVisualizer.Views.RecValidation
                     return;
                 }
 
-                using (var image1 = new Bitmap(images.Image1.FullName))
-                using (var image2 = new Bitmap(images.Image2.FullName))
+                try
                 {
-                    var result = QuadrantComparer.ComputeDelta(
-                        image1,
-                        image2,
-                        new QuadrantConfig(QicRecConstants.DEFAULT_QUADRANT_ROWS, QicRecConstants.DEFAULT_QUADRANT_COLUMNS)
-                        {
-                            Aoi = ImageDisplayer.AoiAdapter.GetAoi()
-                        });
+                    ResultsDisplay.AddNewResult(images.Image1, images.Image2, ImageDisplayer.AoiAdapter.GetAoi());
+                }
+                catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show($"Error during processing: {e}");
                 }
             });
         }
@@ -85,7 +84,7 @@ namespace QicRecVisualizer.Views.RecValidation
         }
 
         private void ExecuteAddClipBoardToFileCommand()
-        {  
+        {
             AsyncWrapper.Wrap(() =>
             {
                 if (Clipboard.ContainsImage())
@@ -96,10 +95,11 @@ namespace QicRecVisualizer.Views.RecValidation
                         return;
                     }
                 }
+
                 MessageBox.Show(@"the clipboard does not contains an image");
             });
         }
-        
+
         private void ExecuteAddSelectedFileCommand()
         {
             AsyncWrapper.Wrap(() =>

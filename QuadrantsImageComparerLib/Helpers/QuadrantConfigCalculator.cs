@@ -5,7 +5,7 @@ using QuadrantsImageComparerLib.Models;
 
 namespace QuadrantsImageComparerLib.Helpers
 {
-    internal static class QuadrantConfigCalculator
+    public static class QuadrantConfigCalculator
     {
         public static Rectangle ComputeAoi(this ImageAoi imageAoi, Size imgSize)
         {
