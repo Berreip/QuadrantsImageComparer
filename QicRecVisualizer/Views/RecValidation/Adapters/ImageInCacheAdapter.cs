@@ -1,4 +1,5 @@
-﻿using QicRecVisualizer.Services.ImagesCache;
+﻿using System.IO;
+using QicRecVisualizer.Services.ImagesCache;
 using QicRecVisualizer.WpfCore;
 
 namespace QicRecVisualizer.Views.RecValidation.Adapters
@@ -6,16 +7,15 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
     internal sealed class ImageInCacheAdapter : ViewModelBase
     {
         private readonly IImageInCache _imageInCache;
-        public string ImageName { get; }
-        public string ImageFullName { get; }
+        public string ImageName => _imageInCache.File.Name;
+        public string ImageFullName => _imageInCache.File.FullName;
         private bool _isSelectedAsSecondImage;
         private bool _isSelectedAsFirstImage;
 
         public ImageInCacheAdapter(IImageInCache imageInCache)
         {
             _imageInCache = imageInCache;
-            ImageFullName = imageInCache.File.FullName;
-            ImageName = imageInCache.FileName;
+            ImageFile = imageInCache.File;
         }
 
         public bool IsSelectedAsFirstImage
@@ -29,6 +29,9 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             get => _isSelectedAsSecondImage;
             set => SetProperty(ref _isSelectedAsSecondImage, value);
         }
+
+        public FileInfo ImageFile { get; }
+
         public IImageInCache GetImageModel() => _imageInCache;
     }
 }

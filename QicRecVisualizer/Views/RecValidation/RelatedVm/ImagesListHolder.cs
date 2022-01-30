@@ -20,6 +20,7 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
         IDelegateCommandLight OpenCacheFolderCommand { get; }
         void AddImageFile(FileInfo validFile);
         void AddImageBitmap(Bitmap image);
+        bool TryGetSelectedImageCouple(out (FileInfo Image1, FileInfo Image2) images);
     }
 
     internal sealed class ImagesListHolder : IImagesListHolder
@@ -55,6 +56,33 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
         public void AddImageBitmap(Bitmap image)
         {
             _imagesInCacheList.Add(new ImageInCacheAdapter(_imageCacheService.AddImageBitmap(image)));
+        }
+
+        /// <inheritdoc />
+        public bool TryGetSelectedImageCouple(out (FileInfo Image1, FileInfo Image2) images)
+        {
+            FileInfo first = null;
+            FileInfo second = null;
+            foreach (var img in _imagesInCacheList)
+            {
+                if (img.IsSelectedAsFirstImage)
+                {
+                    first = img.ImageFile;
+                }
+                if (img.IsSelectedAsSecondImage)
+                {
+                    second = img.ImageFile;
+                }
+            }
+
+            if (first == null || second == null)
+            {
+                images = (null, null);
+                return false;
+            }
+
+            images = (first, second);
+            return true;
         }
 
 

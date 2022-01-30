@@ -1,11 +1,15 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using QicRecVisualizer.Services;
 using QicRecVisualizer.Services.Helpers;
 using QicRecVisualizer.Views.RecValidation.RelatedVm;
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Browsers;
 using QicRecVisualizer.WpfCore.Commands;
+using QuadrantsImageComparerLib;
+using QuadrantsImageComparerLib.Models;
 
 namespace QicRecVisualizer.Views.RecValidation
 {
@@ -40,7 +44,28 @@ namespace QicRecVisualizer.Views.RecValidation
         {
             AsyncWrapper.Wrap(() =>
             {
-                
+                if (!ImagesListHolder.TryGetSelectedImageCouple(out var images))
+                {
+                    MessageBox.Show(@"you have to select an image 1 and image 2 in order to compare them");
+                    return;
+                }
+
+                using (var image1 = new Bitmap(images.Image1.FullName))
+                using (var image2 = new Bitmap(images.Image2.FullName))
+                {
+                    var result = QuadrantComparer.ComputeDelta(
+                        image1,
+                        image2,
+                        new QuadrantConfig
+                        {
+                            AoiBottomPercentage = (int) Math.Round(ImageDisplayer.BottomSliderValue),
+                            AoiLeftPercentage = (int) Math.Round(ImageDisplayer.LeftSliderValue),
+                            AoiTopPercentage = (int) Math.Round(ImageDisplayer.TopSliderValue),
+                            AoiRightPercentage = (int) Math.Round(ImageDisplayer.RightSliderValue),
+                            NumberOfQuadrantRows = QicRecConstants.DEFAULT_QUADRANT_ROWS,
+                            NumberOfQuadrantColumns = QicRecConstants.DEFAULT_QUADRANT_COLUMNS,
+                        });
+                }
             });
         }
 
