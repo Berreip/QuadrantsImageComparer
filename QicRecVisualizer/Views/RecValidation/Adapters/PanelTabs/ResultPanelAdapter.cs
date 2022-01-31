@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Images;
@@ -9,9 +11,9 @@ using QuadrantsImageComparerLib.Extractors;
 using QuadrantsImageComparerLib.Helpers;
 using QuadrantsImageComparerLib.Models;
 
-namespace QicRecVisualizer.Views.RecValidation.Adapters
+namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
 {
-    public sealed class ResultPanelAdapter : ViewModelBase, IDisposable
+    internal sealed class ResultPanelAdapter : ViewModelBase, IDisposable, IDisplayPanelAdapter
     {
         private readonly ImageAoi _imageAoi;
         private IQuadrantDelta _quadrantDelta;
@@ -19,17 +21,19 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         private readonly Bitmap _image2Original;
         public FileInfo Image1File { get; }
         public FileInfo Image2File { get; }
-        public string DisplayHeader { get; }
 
         public BitmapImage Image1 { get; }
         public BitmapImage Image2 { get; }
 
-        public ResultPanelAdapter(FileInfo image1File, FileInfo image2File, int resultTabsCount, ImageAoi imageAoi)
+        public int[] AvailableRowsColumnsValues { get; }
+        private MatrixAdapter[] _rgbMatricesAdapterList = Array.Empty<MatrixAdapter>();
+
+        public ResultPanelAdapter(FileInfo image1File, FileInfo image2File, ImageAoi imageAoi)
         {
             _imageAoi = imageAoi;
             Image1File = image1File;
             Image2File = image2File;
-            DisplayHeader = $"Result {resultTabsCount}";
+            AvailableRowsColumnsValues = Enumerable.Range(1, 100).ToArray();
             
             _image1Original = new Bitmap(image1File.FullName);
             _image2Original = new Bitmap(image2File.FullName);
@@ -47,6 +51,12 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             }
         }
 
+        public MatrixAdapter[] RgbMatricesAdapterList
+        {
+            get => _rgbMatricesAdapterList;
+            set => SetProperty(ref _rgbMatricesAdapterList, value);
+        }
+        
         private BitmapImage _imageQuadrant1;
 
         public BitmapImage ImageQuadrant1
@@ -54,7 +64,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             get => _imageQuadrant1;
             private set => SetProperty(ref _imageQuadrant1, value); 
         }
-
+        
         private BitmapImage _imageQuadrant2;
 
         public BitmapImage ImageQuadrant2
@@ -91,6 +101,25 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             }
         }
 
+        private double _thresholdValue;
+        private int _thresholdValueInt = 0;
+
+        public double ThresholdValue
+        {
+            get => _thresholdValue;
+            set
+            {
+                if (SetProperty(ref _thresholdValue, value))
+                {
+                    _thresholdValueInt = (int)_thresholdValue;
+                    foreach (var matrixAdapter in _rgbMatricesAdapterList)
+                    {
+                        matrixAdapter.RefreshCells(_thresholdValueInt);
+                    }
+                }
+            }
+        }
+
         public void ComputeWithParameters(int quadrantRows, int quadrantColumns)
         {
             _selectedRowValue = quadrantRows;
@@ -107,6 +136,14 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             // and display the result
             ImageQuadrant1 = _quadrantDelta.QuadrantImg1.GetBitmapImage();
             ImageQuadrant2 = _quadrantDelta.QuadrantImg2.GetBitmapImage();
+            
+            // display matrix:
+            RgbMatricesAdapterList = new[]
+            {
+                new MatrixAdapter("Red", _quadrantDelta.Red, _thresholdValueInt),
+                new MatrixAdapter("Green", _quadrantDelta.Green, _thresholdValueInt),
+                new MatrixAdapter("Blue", _quadrantDelta.Blue, _thresholdValueInt),
+            };
         }
         
         /// <inheritdoc />

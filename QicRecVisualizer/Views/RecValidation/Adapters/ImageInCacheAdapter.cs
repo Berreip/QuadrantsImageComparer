@@ -11,6 +11,8 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         public string ImageFullName => _imageInCache.File.FullName;
         private bool _isSelectedAsSecondImage;
         private bool _isSelectedAsFirstImage;
+        private int _firstBorderThickness;
+        private int _secondBorderThickness;
 
         public ImageInCacheAdapter(IImageInCache imageInCache)
         {
@@ -21,16 +23,41 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         public bool IsSelectedAsFirstImage
         {
             get => _isSelectedAsFirstImage;
-            set => SetProperty(ref _isSelectedAsFirstImage, value);
+            set
+            {
+                if (SetProperty(ref _isSelectedAsFirstImage, value))
+                {
+                    FirstBorderThickness = value ? 2 : 0;
+                }
+            }
         }
-        
+
         public bool IsSelectedAsSecondImage
         {
             get => _isSelectedAsSecondImage;
-            set => SetProperty(ref _isSelectedAsSecondImage, value);
+            set 
+            {
+                if (SetProperty(ref _isSelectedAsSecondImage, value))
+                {
+                    SecondBorderThickness = value ? 2 : 0;
+                }
+            }
         }
 
         public FileInfo ImageFile { get; }
+
+        public int FirstBorderThickness
+        {
+            get => _firstBorderThickness;
+            set => SetProperty(ref _firstBorderThickness, value);
+        }
+
+        public int SecondBorderThickness
+        {
+            get => _secondBorderThickness;
+            set => SetProperty(ref _secondBorderThickness, value);
+        }
+
 
         public IImageInCache GetImageModel() => _imageInCache;
     }

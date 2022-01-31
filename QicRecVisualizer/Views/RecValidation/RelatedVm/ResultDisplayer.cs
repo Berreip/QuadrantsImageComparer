@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using QicRecVisualizer.Services;
 using QicRecVisualizer.Views.RecValidation.Adapters;
+using QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs;
 using QicRecVisualizer.WpfCore;
-using QicRecVisualizer.WpfCore.Commands;
 using QicRecVisualizer.WpfCore.CustomCollections;
 using QuadrantsImageComparerLib.Models;
 
@@ -12,78 +14,80 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
 {
     internal interface IResultDisplayer
     {
-        IDelegateCommandLight ShowMainPanelImageCommand { get; }
-        IDelegateCommandLight<ResultPanelAdapter> ShowResultPanelCommand { get; }
-        bool IsShowingResult { get; set; }
-        ICollectionView ResultsTabs { get; }
-        ResultPanelAdapter SelectedResultDisplay { get; }
-        int[] AvailableRowsColumnsValues { get; }
+        IDisplayPanelAdapter SelectedResultDisplay { get; }
+        ICollectionView TabsAvailableToDisplay { get; }
         void AddNewResult(FileInfo image1, FileInfo image2, ImageAoi imageAoi);
+        void SelectImageAoiTab();
+        void DeleteResultPanelTab(ResultPanelAdapter resultPanel);
     } 
 
     internal sealed class ResultDisplayer : ViewModelBase, IResultDisplayer
     {
-        /// <inheritdoc />
-        public IDelegateCommandLight ShowMainPanelImageCommand { get; }
-        public IDelegateCommandLight<ResultPanelAdapter> ShowResultPanelCommand { get; }
+        private readonly Dictionary<TabHeaderAdapter, IDisplayPanelAdapter> _resultTabs = new Dictionary<TabHeaderAdapter, IDisplayPanelAdapter>();
+        private readonly ObservableCollectionRanged<TabHeaderAdapter> _tabsAvailableToDisplay;
+        public ICollectionView TabsAvailableToDisplay { get; }
+        private readonly TabHeaderAdapter _imageTab;
 
-        /// <inheritdoc />
-        public ICollectionView ResultsTabs { get; }
-        private readonly ObservableCollectionRanged<ResultPanelAdapter> _resultTabs;
-        public int[] AvailableRowsColumnsValues { get; }
-
-        public ResultDisplayer()
+        public ResultDisplayer(IImageDisplayer imageDisplayer)
         {
-            AvailableRowsColumnsValues = Enumerable.Range(1, 200).ToArray();
-            ShowMainPanelImageCommand = new DelegateCommandLight(ExecuteShowMainPanelImageCommand);
-            ShowResultPanelCommand = new DelegateCommandLight<ResultPanelAdapter>(ExecuteShowResultPanelCommand);
-            ResultsTabs = ObservableCollectionSource.GetDefaultView(out _resultTabs);
+            _imageTab = new TabHeaderAdapter("AOI selection", OnSelectedTabChanged);
+            
+            _resultTabs.Add(_imageTab, new ImageAoiPanelAdapter(imageDisplayer));
+            
+            TabsAvailableToDisplay = ObservableCollectionSource.GetDefaultView(new[] { _imageTab }, out _tabsAvailableToDisplay);
+            SelectImageAoiTab();
         }
 
-        private void ExecuteShowResultPanelCommand(ResultPanelAdapter res)
+        /// <inheritdoc />
+        public void SelectImageAoiTab()
         {
+            _imageTab.IsSelected = true;
+        }
+
+        /// <inheritdoc />
+        public void DeleteResultPanelTab(ResultPanelAdapter resultPanel)
+        {
+            // select the aoi image
+            SelectImageAoiTab();
+            
+            var matching = _resultTabs.FirstOrDefault(o => ReferenceEquals(o.Value, resultPanel));
+            Debug.Assert(matching.Value != null, "matchingHeader is null");
+            _tabsAvailableToDisplay.Remove(matching.Key);
+            _resultTabs.Remove(matching.Key);
+            // dispose the result:
+            resultPanel.Dispose();
+        }
+
+        private void OnSelectedTabChanged(TabHeaderAdapter tabSelected)
+        {   
             AsyncWrapper.Wrap(() =>
             {
-                if (res == null) return;
-                SelectedResultDisplay = res;
+                if (tabSelected == null || !_resultTabs.TryGetValue(tabSelected, out var tabToDisplay))
+                {
+                    Debug.Fail("should never happen");
+                    return;
+                }
+                SelectedResultDisplay = tabToDisplay;
             });
         }
 
-        private ResultPanelAdapter _selectedResultDisplay;
+        private IDisplayPanelAdapter _selectedResultDisplay;
 
-        public ResultPanelAdapter SelectedResultDisplay
+        public IDisplayPanelAdapter SelectedResultDisplay
         {
             get => _selectedResultDisplay;
-            private set
-            {
-                if(SetProperty(ref _selectedResultDisplay, value))
-                {
-                    IsShowingResult = true;
-                }
-            }
+            private set => SetProperty(ref _selectedResultDisplay, value);
         }
 
 
         /// <inheritdoc />
         public void AddNewResult(FileInfo image1, FileInfo image2, ImageAoi imageAoi)
         {
-            var result = new ResultPanelAdapter(image1, image2, _resultTabs.Count, imageAoi);
-
+            var result = new ResultPanelAdapter(image1, image2, imageAoi);
             result.ComputeWithParameters(QicRecConstants.DEFAULT_QUADRANT_ROWS, QicRecConstants.DEFAULT_QUADRANT_COLUMNS);
-            _resultTabs.Add(result);
-        }
-
-        private void ExecuteShowMainPanelImageCommand()
-        {
-            IsShowingResult = false;
-        }
-
-        private bool _isShowingResult;
-
-        public bool IsShowingResult
-        {
-            get => _isShowingResult;
-            set => SetProperty(ref _isShowingResult, value);
+            var tabHeaderResult = new TabHeaderAdapter($"Result {_resultTabs.Count}", OnSelectedTabChanged);
+            _resultTabs.Add(tabHeaderResult, result);
+            _tabsAvailableToDisplay.Add(tabHeaderResult);
         }
     }
 }

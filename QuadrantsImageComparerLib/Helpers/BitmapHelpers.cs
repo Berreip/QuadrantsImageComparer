@@ -66,9 +66,9 @@ namespace QuadrantsImageComparerLib.Helpers
                         throw new ArgumentException(@"bmpData here should have the same stride");
                     }
 
-                    var red = new int[img1.Width, img1.Height];
-                    var green = new int[img1.Width, img1.Height];
-                    var blue = new int[img1.Width, img1.Height];
+                    var red = new int[img1.Height, img1.Width];
+                    var green = new int[img1.Height, img1.Width];
+                    var blue = new int[img1.Height, img1.Width];
 
                     var bytesPerPixel = Image.GetPixelFormatSize(img1.PixelFormat) / 8;
                     var heightInPixels = bmpData1.Height;
@@ -84,9 +84,9 @@ namespace QuadrantsImageComparerLib.Helpers
                         //byte* currentLine = ptrFirstPixel + y * bitmapData.Stride;
                         for (var x = 0; x < widthInBytes; x = x + bytesPerPixel)
                         {
-                            blue[arrayWidth, arrayHeight] = currentLineImg1[x] - currentLineImg2[x]; //blue
-                            green[arrayWidth, arrayHeight] = currentLineImg1[x + 1] - currentLineImg2[x + 1]; //green
-                            red[arrayWidth, arrayHeight] = currentLineImg1[x + 2] - currentLineImg2[x + 2]; //red
+                            blue[arrayHeight, arrayWidth] = currentLineImg1[x] - currentLineImg2[x]; //blue
+                            green[arrayHeight, arrayWidth] = currentLineImg1[x + 1] - currentLineImg2[x + 1]; //green
+                            red[arrayHeight, arrayWidth] = currentLineImg1[x + 2] - currentLineImg2[x + 2]; //red
                             arrayWidth++;
                         }
 

@@ -1,5 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.CompilerServices;
+using QicRecVisualizer.Views.RecValidation.Adapters;
+using QicRecVisualizer.WpfCore.Images;
+
 // ReSharper disable UnusedMethodReturnValue.Global
 
 namespace QicRecVisualizer.WpfCore

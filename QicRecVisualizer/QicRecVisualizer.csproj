@@ -91,9 +91,15 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Views\Configuration\ConfigurationView.xaml.cs" />
     <Compile Include="Views\Configuration\ConfigurationViewModel.cs" />
+    <Compile Include="Views\DataTemplates\MainPanelTemplateSelector.cs" />
     <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
-    <Compile Include="Views\RecValidation\Adapters\ResultPanelAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\MatrixAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\MatrixColorGetter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\PanelTabs\IDisplayPanelAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\PanelTabs\ImageAoiPanelAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\PanelTabs\ResultPanelAdapter.cs" />
+    <Compile Include="Views\RecValidation\Adapters\TabHeaderAdapter.cs" />
     <Compile Include="Views\RecValidation\RecValidationView.xaml.cs" />
     <Compile Include="Views\RecValidation\RecValidationViewModel.cs" />
     <Compile Include="Views\RecValidation\RelatedVm\ImageDisplayer.cs" />

@@ -4,6 +4,8 @@ using System.IO;
 using System.Windows.Forms;
 using QicRecVisualizer.Services;
 using QicRecVisualizer.Services.Helpers;
+using QicRecVisualizer.Views.RecValidation.Adapters;
+using QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs;
 using QicRecVisualizer.Views.RecValidation.RelatedVm;
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Browsers;
@@ -28,6 +30,8 @@ namespace QicRecVisualizer.Views.RecValidation
         public IDelegateCommandLight AddSelectedFileCommand { get; }
         public IDelegateCommandLight AddClipBoardToFileCommand { get; }
         public IDelegateCommandLight ProcesSelectedImageCommand { get; }
+        public IDelegateCommandLight<ResultPanelAdapter> DeleteResultTabCommand { get; }
+        public IDelegateCommandLight<ImageInCacheAdapter> DisplayImageCommand { get; }
 
         private FileInfo _validFile;
 
@@ -40,8 +44,32 @@ namespace QicRecVisualizer.Views.RecValidation
             AddSelectedFileCommand = new DelegateCommandLight(ExecuteAddSelectedFileCommand);
             AddClipBoardToFileCommand = new DelegateCommandLight(ExecuteAddClipBoardToFileCommand);
             ProcesSelectedImageCommand = new DelegateCommandLight(ExecuteProcesSelectedImageCommand);
+            DisplayImageCommand = new DelegateCommandLight<ImageInCacheAdapter>(ExecuteDisplayImageCommand);
+            DeleteResultTabCommand = new DelegateCommandLight<ResultPanelAdapter>(ExecuteDeleteResultTabCommand);
         }
 
+        private void ExecuteDeleteResultTabCommand(ResultPanelAdapter resultPanel)
+        {
+            AsyncWrapper.Wrap(() =>
+            {
+                if (resultPanel != null)
+                {
+                    ResultsDisplay.DeleteResultPanelTab(resultPanel);
+                }
+            });
+        }
+
+        private void ExecuteDisplayImageCommand(ImageInCacheAdapter imageInCache)
+        {
+            AsyncWrapper.Wrap(() =>
+            {
+                // select the image
+                ImageDisplayer.SelectImage(imageInCache);
+                // then switch tab
+                ResultsDisplay.SelectImageAoiTab();
+            });
+        }
+        
         private void ExecuteProcesSelectedImageCommand()
         {
             AsyncWrapper.Wrap(() =>

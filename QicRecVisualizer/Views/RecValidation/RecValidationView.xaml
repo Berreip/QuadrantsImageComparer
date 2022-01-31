@@ -7,10 +7,184 @@
              xmlns:recValidation="clr-namespace:QicRecVisualizer.Views.RecValidation"
              xmlns:adapters="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters"
              xmlns:dependencyProps="clr-namespace:QicRecVisualizer.WpfCore.DependencyProps"
+             xmlns:dataTemplates="clr-namespace:QicRecVisualizer.Views.DataTemplates"
+             xmlns:panelTabs="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs"
              mc:Ignorable="d"
              x:Name="RecValidationUserControlName"
              d:DesignHeight="650" d:DesignWidth="1000"
              d:DataContext="{d:DesignInstance recValidation:RecValidationViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
+    <UserControl.Resources>
+        <dataTemplates:MainPanelTemplateSelector x:Key="MainPanelContent">
+            <!--SELECTED IMAGE DISPLAY-->
+            <dataTemplates:MainPanelTemplateSelector.ImagePanel>
+                <DataTemplate DataType="{x:Type panelTabs:ImageAoiPanelAdapter}">
+                    <Canvas Margin="2" x:Name="CanvasSelectedImage" Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
+                               dependencyProps:ActualSizeBinder.Observe="True"
+                               dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.AoiAdapter.ImageActualWidth, Mode=OneWayToSource}"
+                               dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.AoiAdapter.ImageActualHeight, Mode=OneWayToSource}"
+                               MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
+                               MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
+
+                        <Rectangle Canvas.Top="{Binding ImageDisplayer.AoiAdapter.RectangleTopPosition}"
+                                   Canvas.Left="{Binding ImageDisplayer.AoiAdapter.RectangleLeftPosition}"
+                                   Width="{Binding ImageDisplayer.AoiAdapter.RectangleWidth}"
+                                   Height="{Binding ImageDisplayer.AoiAdapter.RectangleHeight}"
+                                   StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
+                    </Canvas>
+                </DataTemplate>
+            </dataTemplates:MainPanelTemplateSelector.ImagePanel>
+
+            <!-- RESULT DISPLAY -->
+            <dataTemplates:MainPanelTemplateSelector.ResultPanel>
+                <DataTemplate DataType="{x:Type panelTabs:ResultPanelAdapter}">
+                    <Grid Margin="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- CONTROL PANEL -->
+                        <materialDesign:Card Grid.Row="0" Margin="2" Padding="10"
+                                             Background="{StaticResource MaterialDesignPaper}"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="10" VerticalAlignment="Center">Number of Row</TextBlock>
+                                    <ComboBox Margin="10, 2"
+                                              VerticalAlignment="Center"
+                                              ToolTip="Number Of Rows"
+                                              materialDesign:HintAssist.Hint="Number Of Rows"
+                                              MinWidth="72"
+                                              ItemsSource="{Binding AvailableRowsColumnsValues}"
+                                              SelectedValue="{Binding SelectedRowValue, Delay=50}">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
+                                    <TextBlock Margin="10" VerticalAlignment="Center">Number of Columns</TextBlock>
+                                    <ComboBox Margin="10, 2"
+                                              VerticalAlignment="Center"
+                                              ToolTip="Number Of Columns"
+                                              materialDesign:HintAssist.Hint="Number Of Columns"
+                                              MinWidth="72"
+                                              ItemsSource="{Binding AvailableRowsColumnsValues}"
+                                              SelectedValue="{Binding SelectedColumnValue, Delay=50}">
+                                        <ComboBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <VirtualizingStackPanel />
+                                            </ItemsPanelTemplate>
+                                        </ComboBox.ItemsPanel>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <Grid Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Margin="10" VerticalAlignment="Center">Threshold</TextBlock>
+
+                                    <Slider
+                                        Grid.Column="1" Value="{Binding ThresholdValue}"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Stretch"
+                                        Minimum="0"
+                                        Maximum="80"
+                                        Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                        TickFrequency="1" />
+                                </Grid>
+
+                                <!-- DELETE RESULT TAB BUTTON -->
+                                <Button
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Grid.Column="2" Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Delete this result tab"
+                                    Command="{Binding DataContext.DeleteResultTabCommand, ElementName=RecValidationUserControlName}"
+                                    CommandParameter="{Binding .}">
+                                    <materialDesign:PackIcon Kind="Close" />
+                                </Button>
+
+                            </Grid>
+
+                        </materialDesign:Card>
+
+                        <!-- // image details (quadrant and crop): -->
+                        <UniformGrid Grid.Row="1" Columns="2" MaxHeight="200">
+                            <materialDesign:Card Margin="2" Padding="2"
+                                                 Background="{StaticResource MaterialDesignPaper}"
+                                                 materialDesign:ShadowAssist.ShadowDepth="Depth4">
+                                <UniformGrid Columns="2">
+                                    <Image Stretch="Fill" Source="{Binding Image1}" Margin="1" />
+                                    <Image Stretch="Fill" Source="{Binding ImageQuadrant1}" Margin="1" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                                </UniformGrid>
+                            </materialDesign:Card>
+                            <materialDesign:Card Margin="2" Padding="2"
+                                                 Background="{StaticResource MaterialDesignPaper}"
+                                                 materialDesign:ShadowAssist.ShadowDepth="Depth4">
+                                <UniformGrid Columns="2" MaxHeight="300">
+                                    <Image Stretch="Fill" Source="{Binding Image2}" Margin="1" />
+                                    <Image Stretch="Fill" Source="{Binding ImageQuadrant2}" Margin="1" RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                                </UniformGrid>
+                            </materialDesign:Card>
+                        </UniformGrid>
+
+                        <!-- Matrix display -->
+                        <Grid Grid.Row="2">
+                            <ItemsControl ItemsSource="{Binding RgbMatricesAdapterList, Mode=OneWay}">
+                                <!-- RGB MATRICES (x3)-->
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="3" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type adapters:MatrixAdapter}">
+
+                                        <materialDesign:Card Margin="2" Padding="10"
+                                                             SnapsToDevicePixels="True"
+                                                             Background="{StaticResource MaterialDesignPaper}"
+                                                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
+
+                                                <ItemsControl ItemsSource="{Binding MatrixCells, Mode=OneTime}" Height="400" Width="400">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <UniformGrid Columns="{Binding ColumnsCount}" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type adapters:CellAdapter}">
+                                                            <Rectangle ToolTip="{Binding CurrentCellValue}" Fill="{Binding CellColor, Mode=OneWay}"
+                                                                       Stretch="Fill">
+                                                            </Rectangle>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </dataTemplates:MainPanelTemplateSelector.ResultPanel>
+
+        </dataTemplates:MainPanelTemplateSelector>
+    </UserControl.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -82,113 +256,38 @@
             </materialDesign:Card>
 
             <!-- Image display -->
-            <materialDesign:Card Grid.Row="1" Margin="5" Padding="10">
+            <materialDesign:Card Grid.Row="1" Margin="5, 2, 5, 5" Padding="10, 0, 10, 5">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
-                        <!-- show image -->
-                        <Button ToolTip="Main selected image AOI visualizer"
-                                Margin="2"
-                                Command="{Binding ResultsDisplay.ShowMainPanelImageCommand}"
-                                Content="Image AOI visualizer"
-                                Width="200"
-                                Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                Style="{StaticResource MaterialDesignOutlinedButton}" />
+                    <!-- TAB HEADERS -->
+                    <ItemsControl ItemsSource="{Binding ResultsDisplay.TabsAvailableToDisplay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
 
-                        <ItemsControl ItemsSource="{Binding ResultsDisplay.ResultsTabs}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type adapters:TabHeaderAdapter}">
+                                <RadioButton
+                                    GroupName="ResultAndViewGroup"
+                                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4"
+                                    IsChecked="{Binding IsSelected}"
+                                    Content="{Binding DisplayHeader}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
+                    <!-- SELECTED DISPLAY: IMAGE OR RESULT-->
+                    <ContentControl Grid.Row="1"
+                                    Content="{Binding ResultsDisplay.SelectedResultDisplay}"
+                                    ContentTemplateSelector="{StaticResource MainPanelContent}" />
 
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type adapters:ResultPanelAdapter}">
-                                    <Button ToolTip="Show result" Margin="2"
-                                            Command="{Binding DataContext.ResultsDisplay.ShowResultPanelCommand, ElementName=RecValidationUserControlName}"
-                                            CommandParameter="{Binding .}"
-                                            Content="{Binding DisplayHeader}"
-                                            Width="120"
-                                            Style="{StaticResource MaterialDesignOutlinedButton}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-
-                        </ItemsControl>
-                    </StackPanel>
-
-                    <!--selected image display-->
-                    <Border Grid.Row="1" Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource InverseBoolToVisConverter}}" Margin="2">
-                        <Canvas x:Name="CanvasSelectedImage" Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <Image Stretch="Uniform" Source="{Binding ImageDisplayer.CurrentImage}"
-                                   dependencyProps:ActualSizeBinder.Observe="True"
-                                   dependencyProps:ActualSizeBinder.ObservedWidth="{Binding ImageDisplayer.AoiAdapter.ImageActualWidth, Mode=OneWayToSource}"
-                                   dependencyProps:ActualSizeBinder.ObservedHeight="{Binding ImageDisplayer.AoiAdapter.ImageActualHeight, Mode=OneWayToSource}"
-                                   MaxWidth="{Binding Path=ActualWidth, ElementName=CanvasSelectedImage}"
-                                   MaxHeight="{Binding Path=ActualHeight, ElementName=CanvasSelectedImage}" />
-
-                            <Rectangle Canvas.Top="{Binding ImageDisplayer.AoiAdapter.RectangleTopPosition}"
-                                       Canvas.Left="{Binding ImageDisplayer.AoiAdapter.RectangleLeftPosition}"
-                                       Width="{Binding ImageDisplayer.AoiAdapter.RectangleWidth}"
-                                       Height="{Binding ImageDisplayer.AoiAdapter.RectangleHeight}"
-                                       StrokeThickness="2" Stroke="Orange" Fill="Transparent" />
-                        </Canvas>
-                    </Border>
-
-                    <!-- OR selected result  -->
-                    <Grid Grid.Row="1" Visibility="{Binding ResultsDisplay.IsShowingResult, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-
-                        <!-- // first line image details: -->
-                        <materialDesign:Card Margin="5" Padding="10" 
-                                             Background="{StaticResource MaterialDesignPaper}"
-                                             materialDesign:ShadowAssist.ShadowDepth="Depth4">
-                            <UniformGrid Columns="4" MaxHeight="300">
-                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.Image1}" Margin="1" />
-                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.ImageQuadrant1}" Margin="1"/>
-                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.Image2}" Margin="1"/>
-                                <Image Stretch="Fill" Source="{Binding ResultsDisplay.SelectedResultDisplay.ImageQuadrant2}" Margin="1"/>
-                            </UniformGrid>
-                        </materialDesign:Card>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal">
-                            <TextBlock Margin="10" VerticalAlignment="Center">Number of Row</TextBlock>
-                            <ComboBox Margin="10, 2"
-                                      VerticalAlignment="Center"
-                                      ToolTip="Number Of Rows"
-                                      materialDesign:HintAssist.Hint="Number Of Rows"
-                                      MinWidth="72"
-                                      ItemsSource="{Binding ResultsDisplay.AvailableRowsColumnsValues}"
-                                      SelectedValue="{Binding ResultsDisplay.SelectedResultDisplay.SelectedRowValue, Delay=50}">
-                                <ComboBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ComboBox.ItemsPanel>
-                            </ComboBox>
-                            <TextBlock Margin="10" VerticalAlignment="Center">Number of Columns</TextBlock>
-                            <ComboBox Margin="10, 2"
-                                      VerticalAlignment="Center"
-                                      ToolTip="Number Of Columns"
-                                      materialDesign:HintAssist.Hint="Number Of Columns"
-                                      MinWidth="72"
-                                      ItemsSource="{Binding ResultsDisplay.AvailableRowsColumnsValues}"
-                                      SelectedValue="{Binding ResultsDisplay.SelectedResultDisplay.SelectedColumnValue, Delay=50}">
-                                <ComboBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel />
-                                    </ItemsPanelTemplate>
-                                </ComboBox.ItemsPanel>
-                            </ComboBox>
-                        </StackPanel>
-                    </Grid>
                 </Grid>
             </materialDesign:Card>
         </Grid>
@@ -272,13 +371,17 @@
                                                 Content="2" />
                                         </StackPanel>
 
-                                        <Button Grid.Column="1" Margin="2"
-                                                ToolTip="{Binding ImageFullName}"
-                                                Content="{Binding ImageName}"
-                                                Command="{Binding DataContext.ImageDisplayer.DisplayImageCommand, ElementName=RecValidationUserControlName}"
-                                                CommandParameter="{Binding .}"
-                                                Style="{StaticResource MaterialDesignFlatButton}">
-                                        </Button>
+                                        <Border Grid.Column="1" BorderBrush="Orange" BorderThickness="{Binding FirstBorderThickness}">
+                                            <Border BorderBrush="MediumPurple" BorderThickness="{Binding SecondBorderThickness}">
+                                                <Button Margin="2"
+                                                        ToolTip="{Binding ImageFullName}"
+                                                        Content="{Binding ImageName}"
+                                                        Command="{Binding DataContext.DisplayImageCommand, ElementName=RecValidationUserControlName}"
+                                                        CommandParameter="{Binding .}"
+                                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                                </Button>
+                                            </Border>
+                                        </Border>
 
 
                                         <Button

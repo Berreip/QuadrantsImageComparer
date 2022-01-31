@@ -1,46 +1,45 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Media.Imaging;
 using QicRecVisualizer.Views.RecValidation.Adapters;
 using QicRecVisualizer.WpfCore;
-using QicRecVisualizer.WpfCore.Commands;
 using QicRecVisualizer.WpfCore.Images;
-using QuadrantsImageComparerLib.Models;
 
 namespace QicRecVisualizer.Views.RecValidation.RelatedVm
 {
     internal interface IImageDisplayer
     {
-        IDelegateCommandLight<ImageInCacheAdapter> DisplayImageCommand { get; }
-
         BitmapImage CurrentImage { get; }
         bool HasCurrentImage { get; }
         IAoiRectangleAdapter AoiAdapter { get; }
         string ImageHeightFormated { get; }
         string ImageWidthFormated { get; }
+        void SelectImage(ImageInCacheAdapter imageInCache);
     }
 
     internal sealed class ImageDisplayer : ViewModelBase, IImageDisplayer
     {
-        public IDelegateCommandLight<ImageInCacheAdapter> DisplayImageCommand { get; }
         public IAoiRectangleAdapter AoiAdapter { get; }
         
         public ImageDisplayer()
         {
-            DisplayImageCommand = new DelegateCommandLight<ImageInCacheAdapter>(ExecuteDisplayImageCommand);
             AoiAdapter = new AoiRectangleAdapter(10, 10, 10, 10);
             RefrehshImageDependentsValues(null);
         }
 
-        private void ExecuteDisplayImageCommand(ImageInCacheAdapter imageInCache)
+
+        public void SelectImage(ImageInCacheAdapter imageInCache)
         {
-            AsyncWrapper.Wrap(() =>
+            if (imageInCache == null)
             {
-                using (var img = new Bitmap(imageInCache.ImageFullName))
-                {
-                    CurrentImage = img.GetBitmapImage();
-                }
-            });
+                Debug.Fail("imageInCache is null");
+                return;
+            }
+            using (var img = new Bitmap(imageInCache.ImageFullName))
+            {
+                CurrentImage = img.GetBitmapImage();
+            }
         }
 
         private BitmapImage _currentImage;

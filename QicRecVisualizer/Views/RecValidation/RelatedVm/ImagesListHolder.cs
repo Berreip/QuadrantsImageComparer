@@ -34,7 +34,7 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
         /// <inheritdoc />
         public IDelegateCommandLight OpenCacheFolderCommand { get; }
 
-        public ImagesListHolder(IImageCacheService imageCacheService, IQicRecConfigProvider config)
+        public ImagesListHolder(IImageCacheService imageCacheService, IQicRecConfigProvider config, IImageDisplayer imageDisplayer)
         {
             _imageCacheService = imageCacheService;
             _config = config;
@@ -44,6 +44,11 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
             
             DeleteImageInCacheCommand = new DelegateCommandLight<ImageInCacheAdapter>(ExecuteDeleteImageInCacheCommand);
             OpenCacheFolderCommand = new DelegateCommandLight(ExecuteOpenCacheFolderCommand);
+            
+            if (_imagesInCacheList.Count != 0)
+            {
+                imageDisplayer.SelectImage(_imagesInCacheList[0]);
+            }
         }
         
         /// <inheritdoc />
@@ -103,12 +108,10 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
                     return;
                 }
 
-                if (MessageBox.Show("confirm deletion ?", "warning", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                // if (MessageBox.Show("confirm deletion ?", "warning", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                if (_imageCacheService.DeleteImage(imageInCacheAdapter.GetImageModel()))
                 {
-                    if (_imageCacheService.DeleteImage(imageInCacheAdapter.GetImageModel()))
-                    {
-                        _imagesInCacheList.Remove(imageInCacheAdapter);
-                    }
+                    _imagesInCacheList.Remove(imageInCacheAdapter);
                 }
             });
         }
