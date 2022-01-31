@@ -33,5 +33,38 @@
 
             return concatenate;
         }
+
+        public int[,] GetMatrix()
+        {
+            return (int[,])_array.Clone();
+        }
+
+        public bool EqualsArray(int[,] quadrantInfoRed)
+        {
+            if (quadrantInfoRed == null)
+            {
+                return false;
+            }
+            if (quadrantInfoRed.GetLength(0) != Rows)
+            {
+                return false;
+            }
+            if (quadrantInfoRed.GetLength(1) != Columns)
+            {
+                return false;
+            }
+            
+            for (var i = 0; i < Rows; i++)
+            {
+                for (var j = 0; j < Columns; j++)
+                {
+                    if (_array[i, j] != quadrantInfoRed[i, j])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
     }
 }

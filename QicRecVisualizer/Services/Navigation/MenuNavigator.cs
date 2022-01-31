@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using QicRecVisualizer.Services.Injection;
-using QicRecVisualizer.Views.Configuration;
+using QicRecVisualizer.Views.QuadrantsControls;
 using QicRecVisualizer.Views.RecValidation;
 using QicRecVisualizer.WpfCore;
 
@@ -38,7 +38,7 @@ namespace QicRecVisualizer.Services.Navigation
             AvailableMenuCommands = new INavigationCommand[]
             {
                 new NavigationCommand("Record & Validation", () => MainPanel = container.Resolve<RecValidationView>()),
-                new NavigationCommand("Configuration", () => MainPanel = container.Resolve<ConfigurationView>())
+                new NavigationCommand("Extract Diff", () => MainPanel = container.Resolve<QuadrantsControlsView>())
             };
         }
 

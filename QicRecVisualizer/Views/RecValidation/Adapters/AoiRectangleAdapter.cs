@@ -9,8 +9,8 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
     {
         double BottomSliderValue { get; set; }
         double TopSliderValue { get; set; }
-        double RightSliderValue { get; set; }
         double LeftSliderValue { get; set; }
+        double RightSliderValue { get; set; }
         double RectangleTopPosition { get; }
         double RectangleLeftPosition { get; }
         int RectangleWidth { get; }
@@ -25,8 +25,8 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
     {
         private double _bottomSliderValue;
         private double _topSliderValue;
-        private double _rightSliderValue;
         private double _leftSliderValue;
+        private double _rightSliderValue;
         private int _rectangleWidth;
         private double _rectangleLeftPosition;
         private double _rectangleTopPosition;
@@ -34,12 +34,12 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         private int _rectangleHeight;
         private int _imageCurrentWidth;
         
-        public AoiRectangleAdapter(int bottomSliderValue, int topSliderValue, int leftSliderValue, int rightSliderValue)
+        public AoiRectangleAdapter(int bottomSliderValue, int topSliderValue, int rightSliderValue, int leftSliderValue)
         {
             _bottomSliderValue = bottomSliderValue;
             _topSliderValue = topSliderValue;
-            _leftSliderValue = leftSliderValue;
             _rightSliderValue = rightSliderValue;
+            _leftSliderValue = leftSliderValue;
             RefreshAoiResume();
         }
         
@@ -58,7 +58,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             {
                 if (SetProperty(ref _imageCurrentWidth, value))
                 {
-                    UpdateRectangleHorizontalRelated(_leftSliderValue, _rightSliderValue, value);
+                    UpdateRectangleHorizontalRelated(_rightSliderValue, _leftSliderValue, value);
                 }
             }
         }
@@ -147,20 +147,6 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         }
 
         /// <inheritdoc />
-        public double RightSliderValue
-        {
-            get => _rightSliderValue;
-            set 
-            {
-                if (SetProperty(ref _rightSliderValue, value))
-                {
-                    UpdateRectangleHorizontalRelated(_leftSliderValue, value, _imageCurrentWidth);
-                    RefreshAoiResume();
-                }
-            }
-        }
-
-        /// <inheritdoc />
         public double LeftSliderValue
         {
             get => _leftSliderValue;
@@ -168,7 +154,21 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             {
                 if (SetProperty(ref _leftSliderValue, value))
                 {
-                    UpdateRectangleHorizontalRelated(value, _rightSliderValue, _imageCurrentWidth);
+                    UpdateRectangleHorizontalRelated(_rightSliderValue, value, _imageCurrentWidth);
+                    RefreshAoiResume();
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public double RightSliderValue
+        {
+            get => _rightSliderValue;
+            set 
+            {
+                if (SetProperty(ref _rightSliderValue, value))
+                {
+                    UpdateRectangleHorizontalRelated(value, _leftSliderValue, _imageCurrentWidth);
                     RefreshAoiResume();
                 }
             }

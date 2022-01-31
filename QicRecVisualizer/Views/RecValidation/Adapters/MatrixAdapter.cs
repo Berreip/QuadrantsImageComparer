@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Media;
+using QicRecVisualizer.Services.Helpers;
+using QicRecVisualizer.Views.Controls;
 using QicRecVisualizer.WpfCore;
 using QuadrantsImageComparerLib.Models;
 
@@ -12,17 +13,14 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         private readonly Array2D _array2D;
         public string MatrixDisplayName { get; }
         public CellAdapter[] MatrixCells { get; }
-
-        public int ColumnsCount { get; }
-        public int RowsCount { get; }
+        public MatrixInfo CurrentMatrixInfo { get;  }
 
         public MatrixAdapter(string displayName, Array2D array2D, int threshold)
         {
             _array2D = array2D;
             MatrixDisplayName = displayName;
-            ColumnsCount = array2D.Columns;
-            RowsCount = array2D.Rows;
-            MatrixCells = array2D.GetValues().Select(v => new CellAdapter(v, threshold)).ToArray();
+            CurrentMatrixInfo = new MatrixInfo(array2D.Rows, array2D.Columns);
+            MatrixCells = array2D.ComputeCellAdaptersFromArray2d(threshold);
         }
 
         public void RefreshCells(int newThreshold)
@@ -46,6 +44,11 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
             get => _isValidMatrix;
             set => SetProperty(ref _isValidMatrix, value);
         }
+
+        public int[,] GetMatrix()
+        {
+            return _array2D.GetMatrix();
+        }
     }
 
     internal sealed class CellAdapter : ViewModelBase
@@ -55,9 +58,14 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters
         private bool _isValidCell;
         public int CurrentCellValue { get; }
 
-        public CellAdapter(int currentCellValue, int initialThreshold)
+        public int RowId { get; }
+        public int ColumnId { get; }
+
+        public CellAdapter(int currentCellValue, int initialThreshold, int rowId, int columnId)
         {
             CurrentCellValue = currentCellValue;
+            RowId = rowId;
+            ColumnId = columnId;
             _absValue = Math.Abs(currentCellValue);
             RefreshColor(initialThreshold);
         }

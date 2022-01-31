@@ -66,5 +66,115 @@ namespace UnitTests
             //Assert
             Assert.AreEqual(array1D, res.GetValues());
         }
+
+        [Test]
+        public void EqualsArray_returns_false_for_not_equals_array_when_null()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(null);
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+        
+        [Test]
+        public void EqualsArray_returns_false_for_not_equals_array_when_empty()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(new int[, ]{});
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+        
+        [Test]
+        public void EqualsArray_returns_false_for_not_equals_array_when_not_same_format()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(new[, ]
+            {
+                { 1, 5, 198},
+                {0, 12, -5}
+            });
+
+            //Assert
+            Assert.IsFalse(res);
+        }
+        
+        [Test]
+        public void EqualsArray_returns_false_for_not_equals_array_when_value_differs()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(new[, ]
+            {
+                { 1, 5},
+                { 0, 0},
+                { 12, -5},
+            });
+
+            //Assert
+            Assert.IsFalse(res);
+        } 
+        
+        [Test]
+        public void EqualsArray_returns_true_when_equals_()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            });
+
+            //Assert
+            Assert.IsTrue(res);
+        }
+
     }
 }

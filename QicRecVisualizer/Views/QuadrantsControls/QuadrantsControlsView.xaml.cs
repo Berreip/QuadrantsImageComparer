@@ -1,13 +1,14 @@
 ﻿using QicRecVisualizer.Services.Navigation;
 
-namespace QicRecVisualizer.Views.Configuration
+namespace QicRecVisualizer.Views.QuadrantsControls
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    internal sealed partial class ConfigurationView : INavigeablePanel
+    internal sealed partial class QuadrantsControlsView : INavigeablePanel
     {
-        public ConfigurationView()
+        public QuadrantsControlsView(IQuadrantsControlsViewModel vm)
         {
             InitializeComponent();
+            DataContext = vm;
         }
 
         public void OnNavigateTo()

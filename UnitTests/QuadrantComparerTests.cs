@@ -3,8 +3,10 @@ using System.Drawing;
 using System.Linq;
 using NUnit.Framework;
 using QuadrantsImageComparerLib;
+using QuadrantsImageComparerLib.Dto;
 using QuadrantsImageComparerLib.Models;
 using UnitTests.RessourcesFiles;
+using UnitTests.UnitTestHelpers;
 
 namespace UnitTests
 {
@@ -78,9 +80,9 @@ namespace UnitTests
             // AOI = L: 35% | T: 12% | R: 12% | B: 0%
             var targetAoi = new ImageAoi
             {
-                AoiLeftPercentage = 35,
+                AoiLeftPercentage = 12,
                 AoiTopPercentage = 12,
-                AoiRightPercentage = 12,
+                AoiRightPercentage = 35,
                 AoiBottomPercentage = 0
             };
             //Act
@@ -145,6 +147,37 @@ namespace UnitTests
             Assert.AreEqual(-255, res.Green.GetValues().Single());
             Assert.AreEqual(0, res.Blue.GetValues().Single());
         }
+        
+        [Test]
+        public void ComputeDelta_Then_IsValideAgainst_returns_false()
+        {
+            //Arrange
+            var quadrantInfo = ImgFileGetter.GetQuadrantInfoFile(QuadrantInfo.blue_orange_invalid_aoi).Deserialize<QuadrantDiffDto>();
+            using var img1 = ImgFileGetter.GetImage(ImgKey.img100x100_blue_border);
+            using var img2 = ImgFileGetter.GetImage(ImgKey.img100x100_orange_border);
 
+            //Act
+            var delta = QuadrantComparer.ComputeDelta(img1, img2, quadrantInfo.AoiInfo);
+            var valid = delta.IsValideAgainst(quadrantInfo);
+            
+            //Assert
+            Assert.IsFalse(valid);
+        }  
+        
+        [Test]
+        public void ComputeDelta_Then_IsValideAgainst_returns_true()
+        {
+            //Arrange
+            var quadrantInfo = ImgFileGetter.GetQuadrantInfoFile(QuadrantInfo.blue_orange_valid_aoi).Deserialize<QuadrantDiffDto>();
+            using var img1 = ImgFileGetter.GetImage(ImgKey.img100x100_blue_border);
+            using var img2 = ImgFileGetter.GetImage(ImgKey.img100x100_orange_border);
+
+            //Act
+            var delta = QuadrantComparer.ComputeDelta(img1, img2, quadrantInfo.AoiInfo);
+            var valid = delta.IsValideAgainst(quadrantInfo);
+            
+            //Assert
+            Assert.IsTrue(valid);
+        }
     }
 }

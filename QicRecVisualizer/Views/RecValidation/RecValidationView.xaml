@@ -9,6 +9,7 @@
              xmlns:dependencyProps="clr-namespace:QicRecVisualizer.WpfCore.DependencyProps"
              xmlns:dataTemplates="clr-namespace:QicRecVisualizer.Views.DataTemplates"
              xmlns:panelTabs="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs"
+             xmlns:controls="clr-namespace:QicRecVisualizer.Views.Controls"
              mc:Ignorable="d"
              x:Name="RecValidationUserControlName"
              d:DesignHeight="650" d:DesignWidth="1000"
@@ -54,14 +55,14 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="10" VerticalAlignment="Center">Number of Row</TextBlock>
+                                    <TextBlock Margin="10, 2" VerticalAlignment="Center">Row:</TextBlock>
                                     <ComboBox Margin="10, 2"
                                               VerticalAlignment="Center"
                                               ToolTip="Number Of Rows"
-                                              materialDesign:HintAssist.Hint="Number Of Rows"
-                                              MinWidth="72"
+                                              Width="40"
                                               ItemsSource="{Binding AvailableRowsColumnsValues}"
                                               SelectedValue="{Binding SelectedRowValue, Delay=50}">
                                         <ComboBox.ItemsPanel>
@@ -70,12 +71,11 @@
                                             </ItemsPanelTemplate>
                                         </ComboBox.ItemsPanel>
                                     </ComboBox>
-                                    <TextBlock Margin="10" VerticalAlignment="Center">Number of Columns</TextBlock>
+                                    <TextBlock Margin="10, 2" VerticalAlignment="Center">Columns:</TextBlock>
                                     <ComboBox Margin="10, 2"
                                               VerticalAlignment="Center"
                                               ToolTip="Number Of Columns"
-                                              materialDesign:HintAssist.Hint="Number Of Columns"
-                                              MinWidth="72"
+                                              Width="40"
                                               ItemsSource="{Binding AvailableRowsColumnsValues}"
                                               SelectedValue="{Binding SelectedColumnValue, Delay=50}">
                                         <ComboBox.ItemsPanel>
@@ -91,10 +91,12 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Margin="10" VerticalAlignment="Center">Threshold</TextBlock>
+                                    <TextBlock Margin="10, 2" VerticalAlignment="Center">Threshold</TextBlock>
 
                                     <Slider
-                                        Grid.Column="1" Value="{Binding ThresholdValue}"
+                                        Margin="10, 2"
+                                        Grid.Column="1" 
+                                        Value="{Binding ThresholdValue, Delay=50}"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Stretch"
                                         Minimum="0"
@@ -102,15 +104,21 @@
                                         Style="{StaticResource MaterialDesignDiscreteSlider}"
                                         TickFrequency="1" />
                                 </Grid>
-
+                                
+                                <!-- Extract Diff in file -->
+                                <Button Grid.Column="2" Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        ToolTip="extract current diff into a file for futur use"
+                                        Command="{Binding ExtractDiffCommand}"
+                                        Content="EXTRACT CURRENT DIFF" />
+                                
                                 <!-- DELETE RESULT TAB BUTTON -->
-                                <Button
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Grid.Column="2" Style="{StaticResource MaterialDesignIconButton}"
-                                    ToolTip="Delete this result tab"
-                                    Command="{Binding DataContext.DeleteResultTabCommand, ElementName=RecValidationUserControlName}"
-                                    CommandParameter="{Binding .}">
+                                <Button Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource MaterialDesignIconButton}"
+                                        ToolTip="Delete this result tab"
+                                        Command="{Binding DataContext.DeleteResultTabCommand, ElementName=RecValidationUserControlName}"
+                                        CommandParameter="{Binding .}">
                                     <materialDesign:PackIcon Kind="Close" />
                                 </Button>
 
@@ -155,15 +163,26 @@
                                                              SnapsToDevicePixels="True"
                                                              Background="{StaticResource MaterialDesignPaper}"
                                                              materialDesign:ShadowAssist.ShadowDepth="Depth2">
-                                            <StackPanel Orientation="Vertical">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
 
-                                                <ItemsControl ItemsSource="{Binding MatrixCells, Mode=OneTime}" Height="400" Width="400">
+                                                <ItemsControl Grid.Row="1" ItemsSource="{Binding MatrixCells, Mode=OneTime}" 
+                                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <UniformGrid Columns="{Binding ColumnsCount}" />
+                                                            <controls:MatrixGridWpf MatrixInfo="{Binding CurrentMatrixInfo, Mode=OneTime}"/>
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemContainerStyle>
+                                                        <Style >
+                                                            <Setter Property="Grid.Row" Value="{Binding RowId, Mode=OneTime}"/>
+                                                            <Setter Property="Grid.Column" Value="{Binding ColumnId, Mode=OneTime}"/>
+                                                        </Style>
+                                                    </ItemsControl.ItemContainerStyle>
 
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate DataType="{x:Type adapters:CellAdapter}">
@@ -173,7 +192,7 @@
                                                         </DataTemplate>
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
-                                            </StackPanel>
+                                            </Grid>
                                         </materialDesign:Card>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -469,13 +488,13 @@
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.AoiAdapter.RightSliderValue}" />
+                                Value="{Binding ImageDisplayer.AoiAdapter.LeftSliderValue}" />
                             <Slider
                                 Margin="5,10"
                                 Minimum="0"
                                 Maximum="100"
                                 Style="{StaticResource MaterialDesignDiscreteSlider}"
-                                Value="{Binding ImageDisplayer.AoiAdapter.LeftSliderValue}"
+                                Value="{Binding ImageDisplayer.AoiAdapter.RightSliderValue}"
                                 IsDirectionReversed="True" />
                         </StackPanel>
                     </Grid>

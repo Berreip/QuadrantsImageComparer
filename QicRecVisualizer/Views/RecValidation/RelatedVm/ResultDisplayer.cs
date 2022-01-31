@@ -27,6 +27,7 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
         private readonly ObservableCollectionRanged<TabHeaderAdapter> _tabsAvailableToDisplay;
         public ICollectionView TabsAvailableToDisplay { get; }
         private readonly TabHeaderAdapter _imageTab;
+        private int _resCount = 1;
 
         public ResultDisplayer(IImageDisplayer imageDisplayer)
         {
@@ -85,7 +86,7 @@ namespace QicRecVisualizer.Views.RecValidation.RelatedVm
         {
             var result = new ResultPanelAdapter(image1, image2, imageAoi);
             result.ComputeWithParameters(QicRecConstants.DEFAULT_QUADRANT_ROWS, QicRecConstants.DEFAULT_QUADRANT_COLUMNS);
-            var tabHeaderResult = new TabHeaderAdapter($"Result {_resultTabs.Count}", OnSelectedTabChanged);
+            var tabHeaderResult = new TabHeaderAdapter($"Result {_resCount++}", OnSelectedTabChanged);
             _resultTabs.Add(tabHeaderResult, result);
             _tabsAvailableToDisplay.Add(tabHeaderResult);
         }

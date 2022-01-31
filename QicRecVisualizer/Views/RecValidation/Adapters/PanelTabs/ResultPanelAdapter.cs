@@ -4,9 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using Newtonsoft.Json;
 using QicRecVisualizer.WpfCore;
+using QicRecVisualizer.WpfCore.Browsers;
+using QicRecVisualizer.WpfCore.Commands;
 using QicRecVisualizer.WpfCore.Images;
 using QuadrantsImageComparerLib;
+using QuadrantsImageComparerLib.Core;
+using QuadrantsImageComparerLib.Dto;
 using QuadrantsImageComparerLib.Extractors;
 using QuadrantsImageComparerLib.Helpers;
 using QuadrantsImageComparerLib.Models;
@@ -27,6 +32,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
 
         public int[] AvailableRowsColumnsValues { get; }
         private MatrixAdapter[] _rgbMatricesAdapterList = Array.Empty<MatrixAdapter>();
+        public IDelegateCommandLight ExtractDiffCommand { get; }
 
         public ResultPanelAdapter(FileInfo image1File, FileInfo image2File, ImageAoi imageAoi)
         {
@@ -40,6 +46,40 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
             
             Image1 = ComputedAoiAndExtractBitmapImage(_image1Original, imageAoi);
             Image2 = ComputedAoiAndExtractBitmapImage(_image2Original, imageAoi);
+            ExtractDiffCommand = new DelegateCommandLight(ExecuteExtractDiffCommand);
+        }
+
+        private void ExecuteExtractDiffCommand()
+        {
+            AsyncWrapper.Wrap(() =>
+            {
+                var selectedFolder = BrowserDialogManager.OpenDirectoryBrowser("choose a output directory");
+                if (selectedFolder != null)
+                {
+                    var diffDto = new QuadrantDiffDto
+                    {
+                        Red = _rgbMatricesAdapterList[0].GetMatrix(),
+                        Green = _rgbMatricesAdapterList[1].GetMatrix(),
+                        Blue = _rgbMatricesAdapterList[2].GetMatrix(),
+                        Threshold = _thresholdValueInt,
+                        AoiInfo = new AoiInfoDto
+                        {
+                            QuadrantRows = _selectedRowValue,
+                            QuadrantColumns =_selectedColumnValue,
+                            AoiLeftPercentage = _imageAoi.AoiLeftPercentage,
+                            AoiTopPercentage = _imageAoi.AoiTopPercentage,
+                            AoiRightPercentage = _imageAoi.AoiRightPercentage,
+                            AoiBottomPercentage = _imageAoi.AoiBottomPercentage,
+                        }
+                        
+                    };
+                    var json = JsonConvert.SerializeObject(diffDto);
+                    File.WriteAllText(FilesAndDirectoryInfoExtension.AutoRenameFileToAvoidDuplicate(selectedFolder.FullName, "QuadrantsRecImageDiff.json"), json);
+                    
+                    // then open the folder
+                    selectedFolder.OpenFolderInExplorer();
+                }
+            });
         }
 
         private static BitmapImage ComputedAoiAndExtractBitmapImage(Bitmap imageOriginal, ImageAoi imageAoi)
@@ -54,7 +94,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
         public MatrixAdapter[] RgbMatricesAdapterList
         {
             get => _rgbMatricesAdapterList;
-            set => SetProperty(ref _rgbMatricesAdapterList, value);
+            private set => SetProperty(ref _rgbMatricesAdapterList, value);
         }
         
         private BitmapImage _imageQuadrant1;

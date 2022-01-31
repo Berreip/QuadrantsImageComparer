@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using QuadrantsImageComparerLib.Dto;
 
 namespace QuadrantsImageComparerLib.Models
 {
@@ -24,6 +25,11 @@ namespace QuadrantsImageComparerLib.Models
 
         Bitmap QuadrantImg1 { get; }
         Bitmap QuadrantImg2 { get; }
+        
+        /// <summary>
+        /// Returns true if the quadrant delta is valid using the given quadrant info
+        /// </summary>
+        bool IsValideAgainst(QuadrantDiffDto quadrantInfo);
     }
 
     public sealed class QuadrantDelta : IQuadrantDelta
@@ -34,6 +40,14 @@ namespace QuadrantsImageComparerLib.Models
         public IReadOnlyCollection<WarningKind> Warnings { get; }
         public Bitmap QuadrantImg1 { get; }
         public Bitmap QuadrantImg2 { get; }
+
+        /// <inheritdoc />
+        public bool IsValideAgainst(QuadrantDiffDto quadrantInfo)
+        {
+            return Red.EqualsArray(quadrantInfo.Red) && 
+                   Green.EqualsArray(quadrantInfo.Green) &&
+                   Blue.EqualsArray(quadrantInfo.Blue);
+        }
 
         public QuadrantDelta(Array2D red, Array2D green, Array2D blue, IReadOnlyCollection<WarningKind> warnings, Bitmap quadrantImg1, Bitmap quadrantImg2)
         {

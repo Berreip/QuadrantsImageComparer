@@ -22,6 +22,15 @@ namespace UnitTests.RessourcesFiles
             return file;
         }   
         
+        public static FileInfo GetQuadrantInfoFile(QuadrantInfo infoJson)
+        {
+            if (!_ressourceFilesDirectory.TryGetFile($"{infoJson.ToString()}.json", out var file))
+            {
+                throw new ArgumentException($"the file {infoJson}.json could not be found in [{_ressourceFilesDirectory.FullName}]");
+            }
+            return file;
+        }   
+
         public static Bitmap GetImage(ImgKey imgName)
         {
             if (!_ressourceFilesDirectory.TryGetFile($"{imgName.ToString()}.png", out var file))
@@ -30,6 +39,12 @@ namespace UnitTests.RessourcesFiles
             }
             return new Bitmap(file.FullName);
         }
+    }
+
+    internal enum QuadrantInfo
+    {
+        blue_orange_invalid_aoi,
+        blue_orange_valid_aoi
     }
 
     internal enum ImgKey

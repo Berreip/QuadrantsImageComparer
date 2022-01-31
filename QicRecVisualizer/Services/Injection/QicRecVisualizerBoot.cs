@@ -4,7 +4,7 @@ using QicRecVisualizer.Main;
 using QicRecVisualizer.Services.Configuration;
 using QicRecVisualizer.Services.ImagesCache;
 using QicRecVisualizer.Services.Navigation;
-using QicRecVisualizer.Views.Configuration;
+using QicRecVisualizer.Views.QuadrantsControls;
 using QicRecVisualizer.Views.RecValidation;
 using QicRecVisualizer.Views.RecValidation.RelatedVm;
 using SimpleInjector;
@@ -38,8 +38,8 @@ namespace QicRecVisualizer.Services.Injection
             _internalContainer.RegisterType<RecValidationView>(Lifestyle.Singleton);
             _internalContainer.Register<IImportFilesViewModel, RecValidationViewModel>(Lifestyle.Singleton);
             
-            _internalContainer.RegisterType<ConfigurationView>(Lifestyle.Singleton);
-            _internalContainer.Register<IExportFilesViewModel, ConfigurationViewModel>(Lifestyle.Singleton);
+            _internalContainer.RegisterType<QuadrantsControlsView>(Lifestyle.Singleton);
+            _internalContainer.Register<IQuadrantsControlsViewModel, QuadrantsControlsViewModel>(Lifestyle.Singleton);
             
             // services:
             _internalContainer.Register<IImageCacheService, ImageCacheService>(Lifestyle.Singleton);

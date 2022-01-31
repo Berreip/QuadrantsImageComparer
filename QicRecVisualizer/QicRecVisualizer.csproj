@@ -81,6 +81,7 @@
     <Compile Include="Services\Configuration\QicRecConfigProvider.cs" />
     <Compile Include="Services\Helpers\FileValidationHelper.cs" />
     <Compile Include="Services\Helpers\RectangleCropCalculator.cs" />
+    <Compile Include="Services\Helpers\WpfMatrixHelper.cs" />
     <Compile Include="Services\ImagesCache\ImageCacheService.cs" />
     <Compile Include="Services\ImagesCache\ImageInCache.cs" />
     <Compile Include="Services\Injection\InjectionContainer.cs" />
@@ -89,8 +90,9 @@
     <Compile Include="Services\Navigation\NavigationCommand.cs" />
     <Compile Include="Services\QicRecConstants.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="Views\Configuration\ConfigurationView.xaml.cs" />
-    <Compile Include="Views\Configuration\ConfigurationViewModel.cs" />
+    <Compile Include="Views\QuadrantsControls\QuadrantsControlsView.xaml.cs" />
+    <Compile Include="Views\QuadrantsControls\QuadrantsControlsViewModel.cs" />
+    <Compile Include="Views\Controls\MatrixGridWpf.cs" />
     <Compile Include="Views\DataTemplates\MainPanelTemplateSelector.cs" />
     <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
@@ -137,7 +139,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Main\MainWindowView.xaml" />
-    <Page Include="Views\Configuration\ConfigurationView.xaml" />
+    <Page Include="Views\QuadrantsControls\QuadrantsControlsView.xaml" />
     <Page Include="Views\RecValidation\RecValidationView.xaml" />
   </ItemGroup>
   <ItemGroup>

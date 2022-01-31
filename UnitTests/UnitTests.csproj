@@ -50,6 +50,15 @@
       <Content Include="RessourcesFiles\img10x10_red.png">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="RessourcesFiles\blue_vs_orange.json" />
+      <None Remove="RessourcesFiles\blue_orange_invalid_aoi.json" />
+      <Content Include="RessourcesFiles\blue_orange_invalid_aoi.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="RessourcesFiles\blue_orange_valid_aoi.json" />
+      <Content Include="RessourcesFiles\blue_orange_valid_aoi.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using QuadrantsImageComparerLib.Dto;
 using QuadrantsImageComparerLib.Extractors;
 using QuadrantsImageComparerLib.Helpers;
 using QuadrantsImageComparerLib.Models;
@@ -13,7 +14,7 @@ namespace QuadrantsImageComparerLib
     public static class QuadrantComparer
     {
         /// <summary>
-        /// Compute the delta between 2 images uqigne a quadrant kind comparison:
+        /// Compute the delta between 2 images using a quadrant kind comparison:
         ///  the image 2 is computed by quadrant (split for instance in 10x12 quadrants) and then the mean of pixel values for each
         /// quadrant is subtracted to the mean of same quadrants of image 1.
         /// Depending on the number of quadrant, the comparison will be closer to a bitwise comparison.
@@ -45,6 +46,27 @@ namespace QuadrantsImageComparerLib
             var computedAoi = quadrantConfig.Aoi.ComputeAoi(img.Size);
             var quadrantInfo = new ImageQuadrantInfo(computedAoi, img, targetSize);
             return quadrantInfo.CropAndResizeImage();
+        }
+        
+        /// <summary>
+        /// Compute the delta between 2 images using a quadrant kind comparison:
+        ///  the image 2 is computed by quadrant (split for instance in 10x12 quadrants) and then the mean of pixel values for each
+        /// quadrant is subtracted to the mean of same quadrants of image 1.
+        /// Depending on the number of quadrant, the comparison will be closer to a bitwise comparison.
+        /// Note that if the ratio don't match, a warning will be issued BUT the comparison will be done
+        /// </summary>
+        public static IQuadrantDelta ComputeDelta(Bitmap image1, Bitmap image2, AoiInfoDto aoiInfo)
+        {
+            return ComputeDelta(image1, image2, new QuadrantConfig(aoiInfo.QuadrantRows, aoiInfo.QuadrantColumns)
+            {
+                Aoi = new ImageAoi
+                {
+                    AoiLeftPercentage = aoiInfo.AoiLeftPercentage,
+                    AoiTopPercentage = aoiInfo.AoiTopPercentage,
+                    AoiRightPercentage = aoiInfo.AoiRightPercentage,
+                    AoiBottomPercentage = aoiInfo.AoiBottomPercentage,
+                }
+            });
         }
     }
 
