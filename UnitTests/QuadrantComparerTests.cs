@@ -165,6 +165,24 @@ namespace UnitTests
         }  
         
         [Test]
+        public void ComputeDelta_Then_IsValideAgainst_returns_true_when_threshold_is_higher_than_diff()
+        {
+            //Arrange
+            var quadrantInfo = ImgFileGetter.GetQuadrantInfoFile(QuadrantInfo.blue_orange_invalid_aoi).Deserialize<QuadrantDiffDto>();
+            using var img1 = ImgFileGetter.GetImage(ImgKey.img100x100_blue_border);
+            using var img2 = ImgFileGetter.GetImage(ImgKey.img100x100_orange_border);
+            quadrantInfo.Threshold = 1_000;
+
+            //Act
+            var delta = QuadrantComparer.ComputeDelta(img1, img2, quadrantInfo.AoiInfo);
+            var valid = delta.IsValideAgainst(quadrantInfo);
+            
+            //Assert
+            Assert.IsTrue(valid);
+        }  
+
+        
+        [Test]
         public void ComputeDelta_Then_IsValideAgainst_returns_true()
         {
             //Arrange

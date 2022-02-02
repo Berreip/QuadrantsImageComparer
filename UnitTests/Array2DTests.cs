@@ -80,7 +80,7 @@ namespace UnitTests
             var array2D = new Array2D(array);
 
             //Act
-            var res = array2D.EqualsArray(null);
+            var res = array2D.EqualsArray(null, 0);
 
             //Assert
             Assert.IsFalse(res);
@@ -99,7 +99,7 @@ namespace UnitTests
             var array2D = new Array2D(array);
 
             //Act
-            var res = array2D.EqualsArray(new int[, ]{});
+            var res = array2D.EqualsArray(new int[, ]{}, 0);
 
             //Assert
             Assert.IsFalse(res);
@@ -122,7 +122,7 @@ namespace UnitTests
             {
                 { 1, 5, 198},
                 {0, 12, -5}
-            });
+            }, 0);
 
             //Assert
             Assert.IsFalse(res);
@@ -146,14 +146,14 @@ namespace UnitTests
                 { 1, 5},
                 { 0, 0},
                 { 12, -5},
-            });
+            }, 0);
 
             //Assert
             Assert.IsFalse(res);
         } 
         
         [Test]
-        public void EqualsArray_returns_true_when_equals_()
+        public void EqualsArray_returns_true_when_equals()
         {
             //Arrange
             var array = new[, ]
@@ -170,7 +170,31 @@ namespace UnitTests
                 { 1, 5},
                 { 198, 0},
                 { 12, -5},
-            });
+            }, 0);
+
+            //Assert
+            Assert.IsTrue(res);
+        } 
+        
+        [Test]
+        public void EqualsArray_returns_true_when_eqquls_with_threshold()
+        {
+            //Arrange
+            var array = new[, ]
+            {
+                { 1, 10},
+                { 198, 0},
+                { 12, -10},
+            };
+            var array2D = new Array2D(array);
+
+            //Act
+            var res = array2D.EqualsArray(new[, ]
+            {
+                { 1, 5},
+                { 198, 0},
+                { 12, -5},
+            }, 6);
 
             //Assert
             Assert.IsTrue(res);

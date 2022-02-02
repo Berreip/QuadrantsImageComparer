@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <ApplicationIcon>sausage_barbecue_icon.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -79,9 +80,10 @@
     <Compile Include="Main\MainWindowView.xaml.cs" />
     <Compile Include="Main\MainWindowViewModel.cs" />
     <Compile Include="Services\Configuration\QicRecConfigProvider.cs" />
+    <Compile Include="Services\Helpers\BitmapHeatMap.cs" />
     <Compile Include="Services\Helpers\FileValidationHelper.cs" />
+    <Compile Include="Services\Helpers\MatrixColorProviderColor.cs" />
     <Compile Include="Services\Helpers\RectangleCropCalculator.cs" />
-    <Compile Include="Services\Helpers\WpfMatrixHelper.cs" />
     <Compile Include="Services\ImagesCache\ImageCacheService.cs" />
     <Compile Include="Services\ImagesCache\ImageInCache.cs" />
     <Compile Include="Services\Injection\InjectionContainer.cs" />
@@ -92,12 +94,10 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Views\QuadrantsControls\QuadrantsControlsView.xaml.cs" />
     <Compile Include="Views\QuadrantsControls\QuadrantsControlsViewModel.cs" />
-    <Compile Include="Views\Controls\MatrixGridWpf.cs" />
     <Compile Include="Views\DataTemplates\MainPanelTemplateSelector.cs" />
     <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\MatrixAdapter.cs" />
-    <Compile Include="Views\RecValidation\Adapters\MatrixColorGetter.cs" />
     <Compile Include="Views\RecValidation\Adapters\PanelTabs\IDisplayPanelAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\PanelTabs\ImageAoiPanelAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\PanelTabs\ResultPanelAdapter.cs" />
@@ -111,6 +111,7 @@
     <Compile Include="WpfCore\Browsers\BrowserDialogManager.cs" />
     <Compile Include="WpfCore\Commands\CommandHelpers.cs" />
     <Compile Include="WpfCore\Commands\DelegateCommandLight.cs" />
+    <Compile Include="WpfCore\Controls\MatrixGridWpf.cs" />
     <Compile Include="WpfCore\Converters\DirectoryInfoFullNameToStringConverter.cs" />
     <Compile Include="WpfCore\Converters\DirectoryInfoToStringConverter.cs" />
     <Compile Include="WpfCore\Converters\EmptyCollectionToHiddenConverter.cs" />

@@ -1,12 +1,38 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable MemberCanBePrivate.Global
 
-namespace QicRecVisualizer.Views.Controls
+namespace QicRecVisualizer.WpfCore.Controls
 {
-    public class MatrixGridWpf : Grid
+    public sealed class MatrixGridWpf : Grid
     {
+        /* USED LIKE THAT:
+         * <ItemsControl Grid.Row="1" ItemsSource="{Binding MatrixCells, Mode=OneTime}" 
+                                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <controls:MatrixGridWpf MatrixInfo="{Binding CurrentMatrixInfo, Mode=OneTime}"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemContainerStyle>
+                                                        <Style >
+                                                            <Setter Property="Grid.Row" Value="{Binding RowId, Mode=OneTime}"/>
+                                                            <Setter Property="Grid.Column" Value="{Binding ColumnId, Mode=OneTime}"/>
+                                                        </Style>
+                                                    </ItemsControl.ItemContainerStyle>
+
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate DataType="{x:Type adapters:CellAdapter}">
+                                                            <Rectangle ToolTip="{Binding CurrentCellValue}" Fill="{Binding CellColor, Mode=OneWay}"
+                                                                       Stretch="Fill">
+                                                            </Rectangle>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+         */
+        
         static MatrixGridWpf()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MatrixGridWpf), new FrameworkPropertyMetadata(typeof(MatrixGridWpf)));

@@ -9,7 +9,7 @@
              xmlns:dependencyProps="clr-namespace:QicRecVisualizer.WpfCore.DependencyProps"
              xmlns:dataTemplates="clr-namespace:QicRecVisualizer.Views.DataTemplates"
              xmlns:panelTabs="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs"
-             xmlns:controls="clr-namespace:QicRecVisualizer.Views.Controls"
+             xmlns:controls="clr-namespace:QicRecVisualizer.WpfCore.Controls"
              mc:Ignorable="d"
              x:Name="RecValidationUserControlName"
              d:DesignHeight="650" d:DesignWidth="1000"
@@ -96,7 +96,7 @@
                                     <Slider
                                         Margin="10, 2"
                                         Grid.Column="1" 
-                                        Value="{Binding ThresholdValue, Delay=50}"
+                                        Value="{Binding ThresholdValue}"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Stretch"
                                         Minimum="0"
@@ -170,28 +170,11 @@
                                                 </Grid.RowDefinitions>
                                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
 
-                                                <ItemsControl Grid.Row="1" ItemsSource="{Binding MatrixCells, Mode=OneTime}" 
-                                                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <controls:MatrixGridWpf MatrixInfo="{Binding CurrentMatrixInfo, Mode=OneTime}"/>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                    <ItemsControl.ItemContainerStyle>
-                                                        <Style >
-                                                            <Setter Property="Grid.Row" Value="{Binding RowId, Mode=OneTime}"/>
-                                                            <Setter Property="Grid.Column" Value="{Binding ColumnId, Mode=OneTime}"/>
-                                                        </Style>
-                                                    </ItemsControl.ItemContainerStyle>
-
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate DataType="{x:Type adapters:CellAdapter}">
-                                                            <Rectangle ToolTip="{Binding CurrentCellValue}" Fill="{Binding CellColor, Mode=OneWay}"
-                                                                       Stretch="Fill">
-                                                            </Rectangle>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
+                                                <Image Grid.Row="1" Stretch="Fill"
+                                                       Source="{Binding HeatMapMatrix}"
+                                                       Margin="1"
+                                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                       RenderOptions.BitmapScalingMode="NearestNeighbor" />
                                             </Grid>
                                         </materialDesign:Card>
                                     </DataTemplate>
@@ -458,9 +441,12 @@
                                  Visibility="{Binding ImageDisplayer.HasCurrentImage, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <StackPanel>
                     <TextBox
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
                         ToolTip="Aoi given by Right|Top|Left|Bottom"
                         IsReadOnly="True"
                         Margin="5,10"
+                        TextAlignment="Center"
                         Text="{Binding ImageDisplayer.AoiAdapter.AoiResume, Mode=OneWay}" />
                     <Grid>
                         <Grid.ColumnDefinitions>

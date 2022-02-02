@@ -1,4 +1,6 @@
-﻿namespace QuadrantsImageComparerLib.Models
+﻿using System;
+
+namespace QuadrantsImageComparerLib.Models
 {
     public sealed class Array2D
     {
@@ -39,7 +41,10 @@
             return (int[,])_array.Clone();
         }
 
-        public bool EqualsArray(int[,] quadrantInfoRed)
+        /// <summary>
+        /// Returns true if array2d are equals with a tolerance (if threshold == 0 => strictly equals) 
+        /// </summary>
+        public bool EqualsArray(int[,] quadrantInfoRed, int threshold)
         {
             if (quadrantInfoRed == null)
             {
@@ -58,7 +63,7 @@
             {
                 for (var j = 0; j < Columns; j++)
                 {
-                    if (_array[i, j] != quadrantInfoRed[i, j])
+                    if (Math.Abs(_array[i, j] - quadrantInfoRed[i, j]) > threshold)
                     {
                         return false;
                     }

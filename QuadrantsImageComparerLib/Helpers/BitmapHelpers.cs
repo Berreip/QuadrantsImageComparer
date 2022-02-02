@@ -81,7 +81,6 @@ namespace QuadrantsImageComparerLib.Helpers
                     for (var y = 0; y < heightInPixels; y++, currentLineImg1 += bmpData1.Stride, currentLineImg2 += bmpData2.Stride)
                     {
                         var arrayWidth = 0;
-                        //byte* currentLine = ptrFirstPixel + y * bitmapData.Stride;
                         for (var x = 0; x < widthInBytes; x = x + bytesPerPixel)
                         {
                             blue[arrayHeight, arrayWidth] = currentLineImg1[x] - currentLineImg2[x]; //blue

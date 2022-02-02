@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
+using QicRecVisualizer.Services.Helpers;
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Browsers;
 using QicRecVisualizer.WpfCore.Commands;
@@ -39,7 +40,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
             _imageAoi = imageAoi;
             Image1File = image1File;
             Image2File = image2File;
-            AvailableRowsColumnsValues = Enumerable.Range(1, 100).ToArray();
+            AvailableRowsColumnsValues = Enumerable.Range(1, 300).ToArray();
             
             _image1Original = new Bitmap(image1File.FullName);
             _image2Original = new Bitmap(image2File.FullName);
@@ -159,7 +160,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
                 }
             }
         }
-
+        
         public void ComputeWithParameters(int quadrantRows, int quadrantColumns)
         {
             _selectedRowValue = quadrantRows;

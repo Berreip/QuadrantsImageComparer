@@ -6,7 +6,7 @@
              xmlns:quadrantsControls="clr-namespace:QicRecVisualizer.Views.QuadrantsControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:adapters="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters"
-             xmlns:controls="clr-namespace:QicRecVisualizer.Views.Controls"
+             xmlns:controls="clr-namespace:QicRecVisualizer.WpfCore.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance quadrantsControls:QuadrantsControlsViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
@@ -38,14 +38,21 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                
 
-                <TextBlock Grid.Column="0" Margin="10, 2"
-                           Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                           Text="{Binding Threshold, StringFormat='Threshold: {0}'}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
-                
+                <UniformGrid Rows="1">
+                    <TextBlock Margin="10, 2"
+                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                               Text="{Binding Threshold, StringFormat='Threshold: {0}'}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                    <TextBox
+                        ToolTip="Aoi given by Right|Top|Left|Bottom"
+                        IsReadOnly="True"
+                        Margin="5,10"
+                        Text="{Binding AoiResume, Mode=OneWay}" />
+                </UniformGrid>
+
+
                 <ItemsControl Grid.Row="1" ItemsSource="{Binding RgbMatricesForControlAdapterList, Mode=OneWay}">
                     <!-- RGB MATRICES (x3)-->
                     <ItemsControl.ItemsPanel>
@@ -68,29 +75,11 @@
                                     </Grid.RowDefinitions>
                                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
 
-                                    <ItemsControl Grid.Row="1" ItemsSource="{Binding MatrixCells, Mode=OneTime}"
-                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
-                                                  
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <controls:MatrixGridWpf MatrixInfo="{Binding CurrentMatrixInfo, Mode=OneTime}" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemContainerStyle>
-                                            <Style>
-                                                <Setter Property="Grid.Row" Value="{Binding RowId, Mode=OneTime}" />
-                                                <Setter Property="Grid.Column" Value="{Binding ColumnId, Mode=OneTime}" />
-                                            </Style>
-                                        </ItemsControl.ItemContainerStyle>
-
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type adapters:CellAdapter}">
-                                                <Rectangle ToolTip="{Binding CurrentCellValue}" Fill="{Binding CellColor, Mode=OneWay}"
-                                                           Stretch="Fill">
-                                                </Rectangle>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <Image Grid.Row="1" Stretch="Fill"
+                                           Source="{Binding HeatMapMatrix}"
+                                           Margin="1"
+                                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor" />
                                 </Grid>
                             </materialDesign:Card>
                         </DataTemplate>

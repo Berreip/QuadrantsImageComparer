@@ -44,9 +44,9 @@ namespace QuadrantsImageComparerLib.Models
         /// <inheritdoc />
         public bool IsValideAgainst(QuadrantDiffDto quadrantInfo)
         {
-            return Red.EqualsArray(quadrantInfo.Red) && 
-                   Green.EqualsArray(quadrantInfo.Green) &&
-                   Blue.EqualsArray(quadrantInfo.Blue);
+            return Red.EqualsArray(quadrantInfo.Red, quadrantInfo.Threshold) && 
+                   Green.EqualsArray(quadrantInfo.Green, quadrantInfo.Threshold) &&
+                   Blue.EqualsArray(quadrantInfo.Blue, quadrantInfo.Threshold);
         }
 
         public QuadrantDelta(Array2D red, Array2D green, Array2D blue, IReadOnlyCollection<WarningKind> warnings, Bitmap quadrantImg1, Bitmap quadrantImg2)

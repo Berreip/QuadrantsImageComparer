@@ -16,22 +16,29 @@ namespace QicRecVisualizer.Views.QuadrantsControls
     {
     }
 
-    // ReSharper disable once ClassNeverInstantiated.Global
     internal sealed class QuadrantsControlsViewModel : ViewModelBase, IQuadrantsControlsViewModel
     {
         public IDelegateCommandLight LoadDiffFileCommand { get; }
 
-        private MatrixAdapter[] _rgbMatricesForControlAdapterList = Array.Empty<MatrixAdapter>();
-       
-        public MatrixAdapter[] RgbMatricesForControlAdapterList
+        private string _aoiResume;
+
+        public string AoiResume
         {
-            get => _rgbMatricesForControlAdapterList;
-            private set => SetProperty(ref _rgbMatricesForControlAdapterList, value);
+            get => _aoiResume;
+            set => SetProperty(ref _aoiResume, value);
         }
+
+        private MatrixAdapter[] _rgbMatricesForControlAdapterList = Array.Empty<MatrixAdapter>();
 
         public QuadrantsControlsViewModel()
         {
             LoadDiffFileCommand = new DelegateCommandLight(ExecuteLoadDiffFileCommand);
+        }
+
+        public MatrixAdapter[] RgbMatricesForControlAdapterList
+        {
+            get => _rgbMatricesForControlAdapterList;
+            private set => SetProperty(ref _rgbMatricesForControlAdapterList, value);
         }
 
         private void ExecuteLoadDiffFileCommand()
@@ -50,6 +57,9 @@ namespace QicRecVisualizer.Views.QuadrantsControls
                     }
 
                     Threshold = diff.Threshold;
+                    
+                    AoiResume = $"AOI [COLUMS,ROWS] = [{diff.AoiInfo.QuadrantColumns},{diff.AoiInfo.QuadrantRows}] - L: {diff.AoiInfo.AoiLeftPercentage}% | T: {diff.AoiInfo.AoiTopPercentage}% | R: {diff.AoiInfo.AoiRightPercentage}% | B: {diff.AoiInfo.AoiBottomPercentage}%";
+                    
                     // display matrix:
                     RgbMatricesForControlAdapterList = new[]
                     {
@@ -63,10 +73,13 @@ namespace QicRecVisualizer.Views.QuadrantsControls
 
         private int _threshold;
 
+
         public int Threshold
         {
             get => _threshold;
             private set => SetProperty(ref _threshold, value);
         }
     }
+
+    // ReSharper disable once ClassNeverInstantiated.Global
 }
