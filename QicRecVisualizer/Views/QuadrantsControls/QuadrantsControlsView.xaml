@@ -6,87 +6,373 @@
              xmlns:quadrantsControls="clr-namespace:QicRecVisualizer.Views.QuadrantsControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:adapters="clr-namespace:QicRecVisualizer.Views.RecValidation.Adapters"
-             xmlns:controls="clr-namespace:QicRecVisualizer.WpfCore.Controls"
+             xmlns:diffAdapter="clr-namespace:QicRecVisualizer.Views.QuadrantsControls.Adapters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
+             x:Name="QuadrantControlUserControlName"
              d:DataContext="{d:DesignInstance quadrantsControls:QuadrantsControlsViewModel, IsDesignTimeCreatable=False}" x:ClassModifier="internal">
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <!-- LEFT PART = list of diff file dropped or added -->
+            <ColumnDefinition Width="Auto" MinWidth="200" />
+            <!-- RIGHT PART = details of selected diff files -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-
-        <materialDesign:Card Grid.Row="0" Margin="10, 5" Padding="10"
+        <!-- LEFT PART = list of diff file dropped or added -->
+        <materialDesign:Card Grid.Row="0" Margin="10, 2, 2, 2" Padding="2"
                              materialDesign:ShadowAssist.ShadowDepth="Depth2">
-            <Button
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center"
-                Width="200"
-                Style="{StaticResource MaterialDesignOutlinedButton}"
-                ToolTip="Load a previously generated diff file"
-                Content="Load Diff file"
-                Command="{Binding LoadDiffFileCommand}" />
-        </materialDesign:Card>
-
-
-        <materialDesign:Card Grid.Row="1" Margin="10, 5" Padding="10"
-                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
-            <Grid>
-
+            <Grid ToolTip="Drag and drop a diff file here to load it"
+                  AllowDrop="True" Drop="DropDiffFile" DragEnter="DragDiffEnter">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <UniformGrid Rows="1">
-                    <TextBlock Margin="10, 2"
-                               Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                               Text="{Binding Threshold, StringFormat='Threshold: {0}'}"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center" />
-                    <TextBox
-                        ToolTip="Aoi given by Right|Top|Left|Bottom"
-                        IsReadOnly="True"
-                        Margin="5,10"
-                        Text="{Binding AoiResume, Mode=OneWay}" />
-                </UniformGrid>
+                <TextBlock Margin="10, 10, 10, 0"
+                           Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                           Text=".QicRecDiff files loaded"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Center" />
 
+                <!-- searchBar -->
+                <TextBox Grid.Row="1" materialDesign:HintAssist.Hint="Search"
+                         materialDesign:TextFieldAssist.HasClearButton="True"
+                         Margin="5, 0, 5, 5"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         Text="{Binding DiffFilesListHolder.SearchFilter, UpdateSourceTrigger=PropertyChanged, Delay=100}"
+                         VerticalAlignment="Center" />
 
-                <ItemsControl Grid.Row="1" ItemsSource="{Binding RgbMatricesForControlAdapterList, Mode=OneWay}">
-                    <!-- RGB MATRICES (x3)-->
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Columns="3" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type adapters:MatrixAdapter}">
-
-                            <materialDesign:Card Margin="2" Padding="10"
-                                                 SnapsToDevicePixels="True"
-                                                 Background="{StaticResource MaterialDesignPaper}"
-                                                 materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ItemsControl
+                        ItemsSource="{Binding DiffFilesListHolder.AllLoadedDiffFiles}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel IsVirtualizing="True"
+                                                        VirtualizationMode="Recycling" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.Template>
+                            <ControlTemplate TargetType="ItemsControl">
+                                <ScrollViewer CanContentScroll="True"
+                                              VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Hidden"
+                                              Padding="{TemplateBinding Padding}"
+                                              Focusable="False">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </ItemsControl.Template>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type diffAdapter:LoadedDiffFileAdapter}">
                                 <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                    <Image Grid.Row="1" Stretch="Fill"
-                                           Source="{Binding HeatMapMatrix}"
-                                           Margin="1"
-                                           HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                           RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton
+                                            GroupName="GroupDiff1"
+                                            Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                            Margin="2"
+                                            ToolTip="the reference diff for comparison"
+                                            IsChecked="{Binding IsSelectedAsFirstDiff}"
+                                            Content="REF" />
+                                        <RadioButton
+                                            GroupName="GroupDiff2"
+                                            Style="{StaticResource MaterialDesignChoiceChipOutlineRadioButton}"
+                                            Margin="2"
+                                            IsChecked="{Binding IsSelectedAsSecondDiff}"
+                                            Content="C"
+                                            ToolTip="The diff which is compared with the selected reference" />
+                                    </StackPanel>
+
+                                    <Border Grid.Column="1" BorderBrush="Orchid" BorderThickness="{Binding FirstDiffBorderThickness}">
+                                        <Border BorderBrush="Teal" BorderThickness="{Binding SecondDiffBorderThickness}">
+                                            <TextBlock Margin="2"
+                                                       MaxWidth="250"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding DiffToolTip}"
+                                                       Text="{Binding DiffName}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Style="{StaticResource MaterialDesignBody2TextBlock}">
+                                            </TextBlock>
+                                        </Border>
+                                    </Border>
+
+                                    <Button
+                                        Grid.Column="2" ToolTip="remove the diff file"
+                                        Margin="2" Height="35" Width="35" Padding="0"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Style="{StaticResource MaterialDesignFlatButton}"
+                                        Command="{Binding DataContext.DiffFilesListHolder.RemoveDiffCommand, ElementName=QuadrantControlUserControlName}"
+                                        CommandParameter="{Binding .}">
+                                        <materialDesign:PackIcon Kind="Delete" Height="25" Width="25" />
+                                    </Button>
                                 </Grid>
-                            </materialDesign:Card>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!--Drop Zone (in fact all grid is droppable but just to show user that drop is allowed here) -->
+                    <materialDesign:ColorZone Grid.Row="1" Mode="PrimaryDark" Opacity="0.6"
+                                              Margin="5"
+                                              Padding="10" CornerRadius="5"
+                                              materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                              ClipToBounds="False"
+                                              VerticalAlignment="Stretch"
+                                              HorizontalAlignment="Stretch">
+                        <Label FontSize="16"
+                               Content="Drag and drop a diff file here to load it"
+                               ToolTip="Drag and drop a diff file here or anywhere above to load it"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                    </materialDesign:ColorZone>
+                </Grid>
+
+                <Button Grid.Row="3"
+                        Margin="10,10"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        ToolTip="Load a previously generated diff file"
+                        Content="Load Diff file"
+                        Command="{Binding LoadDiffFileCommand}" />
             </Grid>
         </materialDesign:Card>
 
+        <!-- RIGHT PART = details of selected diff files -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <!-- VISUALIZATION -->
+                <RowDefinition Height="*" />
+                <!-- DIFF ANALYSIS -->
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- VISUALIZATION => you could visualize either diff 1 or diff 2 using tabs headers-->
+            <materialDesign:Card Grid.Row="0" Margin="10, 2" Padding="5"
+                                 ToolTip="Visualization of selected diff"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <!-- TAB HEADERS -->
+                    <ItemsControl ItemsSource="{Binding DiffFilesListHolder.TabsAvailableToDisplay}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type diffAdapter:TabHeaderDiffAdapter}">
+                                <RadioButton
+                                    GroupName="DiffVisualizationGroup"
+                                    Style="{StaticResource MaterialDesignTabRadioButton}"
+                                    Margin="4"
+                                    IsChecked="{Binding IsSelected}"
+                                    Content="{Binding DisplayHeader}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- SELECTED DIFF DISPLAY -->
+                    <Grid Grid.Row="1" Visibility="{Binding DiffFilesListHolder.SelectedDiffVisualization, Converter={StaticResource NullToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <UniformGrid Rows="1">
+                            <TextBlock Margin="10, 2"
+                                       Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                                       Text="{Binding DiffFilesListHolder.SelectedDiffVisualization.Threshold, StringFormat='Threshold: {0}'}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            <TextBox
+                                ToolTip="Aoi given by Right|Top|Left|Bottom"
+                                IsReadOnly="True"
+                                Margin="5,10"
+                                Text="{Binding DiffFilesListHolder.SelectedDiffVisualization.AoiResume, Mode=OneWay}" />
+                        </UniformGrid>
+
+
+                        <ItemsControl Grid.Row="1" ItemsSource="{Binding DiffFilesListHolder.SelectedDiffVisualization.RgbMatrices, Mode=OneWay}">
+                            <!-- RGB MATRICES (x3)-->
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type adapters:MatrixAdapter}">
+
+                                    <materialDesign:Card Margin="2" Padding="10"
+                                                         SnapsToDevicePixels="True"
+                                                         Background="{StaticResource MaterialDesignPaper}"
+                                                         materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
+
+                                            <Image Grid.Row="1" Stretch="Fill"
+                                                   Source="{Binding HeatMapMatrix}"
+                                                   Margin="1"
+                                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                                        </Grid>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Grid>
+            </materialDesign:Card>
+
+
+            <!-- DIFF ANALYSIS -->
+            <materialDesign:Card Grid.Row="1" Margin="10, 2" Padding="5"
+                                 Visibility="{Binding DiffFilesListHolder.DiffDeltaDisplay, Converter={StaticResource NullToVisibilityConverter}}"
+                                 ToolTip="Difference between selected diff"
+                                 materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                        <TextBlock Margin="10"
+                                   Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                                   Text="Difference between REF and Compared diff"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center" />
+
+                        <TextBlock Margin="10"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignHeadline5TextBlock}">
+                                    <Setter Property="Foreground" Value="Red" />
+                                    <Setter Property="Text" Value="INVALID" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DiffFilesListHolder.DiffDeltaDisplay.IsValid}" Value="True">
+                                            <Setter Property="Foreground" Value="SeaGreen" />
+                                            <Setter Property="Text" Value="VALID" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!-- DIFFERENCE PART -->
+                    <Grid Grid.Row="1"
+                          Visibility="{Binding DiffFilesListHolder.DiffDeltaDisplay.IsTheSameQuadrantCount, 
+                          Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ItemsControl Grid.Row="0" ItemsSource="{Binding DiffFilesListHolder.DiffDeltaDisplay.RgbMatrices, Mode=OneWay}">
+                            <!-- RGB MATRICES (x3)-->
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type adapters:MatrixAdapter}">
+
+                                    <materialDesign:Card Margin="2" Padding="10"
+                                                         SnapsToDevicePixels="True"
+                                                         Background="{StaticResource MaterialDesignPaper}"
+                                                         materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MatrixDisplayName}" Margin="4" />
+
+                                            <Image Grid.Row="1" Stretch="Fill"
+                                                   Source="{Binding HeatMapMatrix}"
+                                                   Margin="1"
+                                                   HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
+                                        </Grid>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- ADJUSTEMENT CONTROLS AND INFORMATION-->
+                        <materialDesign:Card Grid.Row="1" Margin="10, 2" Padding="5"
+                                             materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Margin="10, 2" VerticalAlignment="Center">Threshold</TextBlock>
+
+                                <Slider
+                                    Margin="10, 2"
+                                    Grid.Column="1"
+                                    Value="{Binding DiffFilesListHolder.DiffDeltaDisplay.ThresholdValue}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Stretch"
+                                    Minimum="0"
+                                    Maximum="80"
+                                    Style="{StaticResource MaterialDesignDiscreteSlider}"
+                                    TickFrequency="1" />
+
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Margin="10, 2" VerticalAlignment="Center">Current Max delta:</TextBlock>
+                                    <TextBlock Margin="10, 2"
+                                               Text="{Binding DiffFilesListHolder.DiffDeltaDisplay.CurrentMaxDelta}"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                        </materialDesign:Card>
+                    </Grid>
+
+                    <!-- WARNING message if quadrant could not be compared -->
+                    <TextBlock Grid.Row="1"
+                               Margin="10"
+                               Visibility="{Binding DiffFilesListHolder.DiffDeltaDisplay.IsTheSameQuadrantCount, Converter={StaticResource InvertBooleanToVisibilityConverter}}"
+                               Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                               TextWrapping="Wrap"
+                               Text="NOT THE SAME QUADRANTS ROW/COLUMNS COUNT: only identical quadrant diff could be compared"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+
+                </Grid>
+            </materialDesign:Card>
+
+        </Grid>
     </Grid>
 </UserControl>

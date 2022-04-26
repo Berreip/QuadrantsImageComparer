@@ -92,9 +92,14 @@
     <Compile Include="Services\Navigation\NavigationCommand.cs" />
     <Compile Include="Services\QicRecConstants.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Views\QuadrantsControls\Adapters\DiffDeltaDisplayAdapter.cs" />
+    <Compile Include="Views\QuadrantsControls\Adapters\LoadedDiffFileAdapter.cs" />
+    <Compile Include="Views\QuadrantsControls\Adapters\TabHeaderDiffAdapter.cs" />
     <Compile Include="Views\QuadrantsControls\QuadrantsControlsView.xaml.cs" />
     <Compile Include="Views\QuadrantsControls\QuadrantsControlsViewModel.cs" />
     <Compile Include="Views\DataTemplates\MainPanelTemplateSelector.cs" />
+    <Compile Include="Views\QuadrantsControls\RelatedVm\DiffFileListHolder.cs" />
+    <Compile Include="Views\QuadrantsControls\RelatedVm\SearchFilters.cs" />
     <Compile Include="Views\RecValidation\Adapters\AoiRectangleAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\ImageInCacheAdapter.cs" />
     <Compile Include="Views\RecValidation\Adapters\MatrixAdapter.cs" />

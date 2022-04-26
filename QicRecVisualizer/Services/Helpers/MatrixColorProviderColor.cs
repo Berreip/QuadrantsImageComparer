@@ -8,7 +8,7 @@ namespace QicRecVisualizer.Services.Helpers
         {
             if (absDifference <= 0)
             {
-                return Color.LightGreen;
+                return Color.FromArgb(199, 237, 199);
             }
 
             if (absDifference == 1)
@@ -18,25 +18,25 @@ namespace QicRecVisualizer.Services.Helpers
 
             if (absDifference == 2)
             {
-                return Color.FromArgb(127, 234, 82);
+                return Color.FromArgb(80, 232, 53);
             }
 
             if (absDifference == 3)
             {
-                return Color.FromArgb(152, 234, 84);
+                return Color.FromArgb(158, 206, 68);
             }
             
             if (absDifference == 4)
             {
-                return Color.FromArgb(179, 234, 77);
+                return Color.LightPink;
             }
             if (absDifference <= 10)
             {
-                return Color.LightPink;
+                return Color.Orange;
             }
             if (absDifference <= 20)
             {
-                return Color.Orange;
+                return Color.FromArgb(198, 125, 0);
             }
             if (absDifference <= 30)
             {

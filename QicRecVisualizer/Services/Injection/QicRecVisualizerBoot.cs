@@ -5,6 +5,7 @@ using QicRecVisualizer.Services.Configuration;
 using QicRecVisualizer.Services.ImagesCache;
 using QicRecVisualizer.Services.Navigation;
 using QicRecVisualizer.Views.QuadrantsControls;
+using QicRecVisualizer.Views.QuadrantsControls.RelatedVm;
 using QicRecVisualizer.Views.RecValidation;
 using QicRecVisualizer.Views.RecValidation.RelatedVm;
 using SimpleInjector;
@@ -43,6 +44,7 @@ namespace QicRecVisualizer.Services.Injection
             
             // services:
             _internalContainer.Register<IImageCacheService, ImageCacheService>(Lifestyle.Singleton);
+            _internalContainer.Register<IDiffFileListHolder, DiffFileListHolder>(Lifestyle.Singleton);
             
             // VM related services
             _internalContainer.Register<IImagesListHolder, ImagesListHolder>(Lifestyle.Singleton);

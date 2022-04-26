@@ -44,17 +44,17 @@ namespace QuadrantsImageComparerLib.Models
         /// <summary>
         /// Returns true if array2d are equals with a tolerance (if threshold == 0 => strictly equals) 
         /// </summary>
-        public bool EqualsArray(int[,] quadrantInfoRed, int threshold)
+        public bool EqualsArray(int[,] quadrantInfoInput, int threshold)
         {
-            if (quadrantInfoRed == null)
+            if (quadrantInfoInput == null)
             {
                 return false;
             }
-            if (quadrantInfoRed.GetLength(0) != Rows)
+            if (quadrantInfoInput.GetLength(0) != Rows)
             {
                 return false;
             }
-            if (quadrantInfoRed.GetLength(1) != Columns)
+            if (quadrantInfoInput.GetLength(1) != Columns)
             {
                 return false;
             }
@@ -63,13 +63,54 @@ namespace QuadrantsImageComparerLib.Models
             {
                 for (var j = 0; j < Columns; j++)
                 {
-                    if (Math.Abs(_array[i, j] - quadrantInfoRed[i, j]) > threshold)
+                    if (Math.Abs(_array[i, j] - quadrantInfoInput[i, j]) > threshold)
                     {
                         return false;
                     }
                 }
             }
             return true;
+        }
+        
+        /// <summary>
+        /// Returns true if array2d are equals with a tolerance (if threshold == 0 => strictly equals)
+        /// and out the delta diff matrix (without taking into account the threshold)
+        /// </summary>
+        public bool EqualsArrayAndGetDifference(int[,] quadrantInfoInput, int threshold, out int[,] delta)
+        {
+            if (quadrantInfoInput == null)
+            {
+                delta = default;
+                return false;
+            }
+            if (quadrantInfoInput.GetLength(0) != Rows)
+            {
+                delta = default;
+                return false;
+            }
+            if (quadrantInfoInput.GetLength(1) != Columns)
+            {
+                delta = default;
+                return false;
+            }
+
+            delta = new int[Rows, Columns];
+            var arrayEquals = true;
+            for (var i = 0; i < Rows; i++)
+            {
+                for (var j = 0; j < Columns; j++)
+                {
+                    var deltaCell = Math.Abs(_array[i, j] - quadrantInfoInput[i, j]);
+                    
+                    delta[i, j] = deltaCell;
+                    
+                    if (deltaCell > threshold)
+                    {
+                        arrayEquals = false;
+                    }
+                }
+            }
+            return arrayEquals;
         }
     }
 }

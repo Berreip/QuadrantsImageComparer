@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Newtonsoft.Json;
+using QicRecVisualizer.Services;
 using QicRecVisualizer.Services.Helpers;
 using QicRecVisualizer.WpfCore;
 using QicRecVisualizer.WpfCore.Browsers;
@@ -75,7 +76,7 @@ namespace QicRecVisualizer.Views.RecValidation.Adapters.PanelTabs
                         
                     };
                     var json = JsonConvert.SerializeObject(diffDto);
-                    File.WriteAllText(FilesAndDirectoryInfoExtension.AutoRenameFileToAvoidDuplicate(selectedFolder.FullName, "QuadrantsRecImageDiff.json"), json);
+                    File.WriteAllText(FilesAndDirectoryInfoExtension.AutoRenameFileToAvoidDuplicate(selectedFolder.FullName, $"QuadrantsRecImageDiff{QicRecConstants.DIFF_EXTENSIONS}"), json);
                     
                     // then open the folder
                     selectedFolder.OpenFolderInExplorer();
